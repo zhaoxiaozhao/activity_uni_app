@@ -1,0 +1,1 @@
+<view class="content"><button bindtap="{{a}}">去登录</button></view>
