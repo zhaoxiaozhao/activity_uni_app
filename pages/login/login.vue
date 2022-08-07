@@ -1,8 +1,6 @@
 <template>
   <view class="login_box">
-    <button @click="selectImage()">
-      <image class="avatar-wrapper" :src="avatarUrl" mode="aspectFill" ></image>
-    </button>
+    <image class="avatar-wrapper" :src="avatarUrl" @click="selectImage()" mode="aspectFill" ></image>
     <input type="nickname" class="nick-input" placeholder="请输入昵称" />
     <button v-if="!authInfo && canIUseGetUserProfile" class="login_btn green" @click="getuserProfile">
       微信授权用户信息
@@ -22,7 +20,7 @@
 </template>
 
 <script>
-import { WxLogin, upload } from "@/api/api.js";
+import { WxLogin, uploadURL, download } from "@/api/api.js";
 //import { mapMutations, mapGetters, mapActions } from 'vuex'
 export default {
   data() {
@@ -299,8 +297,10 @@ export default {
         icon: 'loading',
         title: '正在上传'
       })
+      debugger
+      this.avatarUrl = imgPaths[0];
       uni.uploadFile({
-        url: upload,
+        url: uploadURL,
         filePath: imgPaths[0],
         name: 'file', //示例，使用顺序给文件命名
         success: function (res) {
@@ -315,7 +315,7 @@ export default {
               })
               return
             } else {
-
+              this.avatarUrl = res.data.url;
             }
           }
         },

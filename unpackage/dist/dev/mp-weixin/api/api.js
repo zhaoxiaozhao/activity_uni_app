@@ -18,6 +18,6 @@ var __spreadValues = (a, b) => {
 var api_base = require("./base.js");
 var utils_request_index = require("../utils/request/index.js");
 const WxLogin = (param) => utils_request_index.http.post(`${api_base.rootUrl}/app/Wx-User/Login`, __spreadValues({}, param));
-const upload = (param) => utils_request_index.http.post(`${api_base.rootUrl}/app/File/Upload`, __spreadValues({}, param));
+const uploadURL = `${api_base.rootUrl}/app/File/Upload`;
 exports.WxLogin = WxLogin;
-exports.upload = upload;
+exports.uploadURL = uploadURL;

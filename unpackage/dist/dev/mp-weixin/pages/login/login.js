@@ -246,8 +246,10 @@ const _sfc_main = {
         icon: "loading",
         title: "\u6B63\u5728\u4E0A\u4F20"
       });
+      debugger;
+      this.avatarUrl = imgPaths[0];
       common_vendor.index.uploadFile({
-        url: api_api.upload,
+        url: api_api.uploadURL,
         filePath: imgPaths[0],
         name: "file",
         success: function(res) {
@@ -261,6 +263,8 @@ const _sfc_main = {
                 duration: 2e3
               });
               return;
+            } else {
+              this.avatarUrl = res.data.url;
             }
           }
         },

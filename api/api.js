@@ -6,6 +6,7 @@ export const registerMember = param => http.post(`${rootUrl}/Member/RegisterMemb
 export const getLoginUserInfo = param => http.post(`${rootUrl}/Member/GetLoginUserInfo`, { ...param }) //获取用户登录信息
 export const registerWxUser = param => http.post(`${rootUrl}/Member/RegisterWxUser`, { ...param }) //新注册会员
 export const WxLogin = param => http.post(`${rootUrl}/app/Wx-User/Login`, { ...param }) //新登录
-export const upload = param => http.post(`${rootUrl}/app/File/Upload`, { ...param })
+export const uploadURL = `${rootUrl}/app/File/Upload`;
+export const download = param => http.post(`${rootUrl}/app/File/download`, { ...param }) //新登录
 
 
