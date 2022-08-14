@@ -1,1 +1,0 @@
-<view class="content"><button bindtap="{{a}}">更新</button></view>
