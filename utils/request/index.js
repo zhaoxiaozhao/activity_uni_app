@@ -22,10 +22,11 @@ http.setConfig(config => {
 })
 
 http.interceptor.request((config, cancel) => {
+  debugger
   /* 请求之前拦截器 */
   // let newstore = uni.getStorageSync('newstore') || {}
   // let storeId = newstore.storeId // 优先取state
-  let { token } = uni.getStorageSync('uerInfo')
+  let { token } = uni.getStorageSync('userInfo')
   config.header = {
     ...config.header
     // b: 1

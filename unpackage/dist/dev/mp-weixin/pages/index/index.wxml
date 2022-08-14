@@ -1,1 +1,1 @@
-<view class="content"><button bindtap="{{a}}">去登录</button></view>
+<view class="content"><button bindtap="{{a}}">更新</button></view>

@@ -1,72 +1,67 @@
 <template>
-  <view class="login_box">
-    <image class="avatar-wrapper" :src="avatarUrl" @click="selectImage()" mode="aspectFill" ></image>
-    <input type="nickname" class="nick-input" placeholder="请输入昵称" />
-    <button v-if="!authInfo && canIUseGetUserProfile" class="login_btn green" @click="getuserProfile">
-      微信授权用户信息
-    </button>
-    <button v-else-if="!authInfo && !canIUseGetUserProfile" class="login_btn green" open-type="getUserInfo" @getuserinfo="getuserinfo">
-      微信授权用户信息
-    </button>
-    <button v-else-if="!userInfo.isMember" class="login_btn" open-type="getPhoneNumber" @getphonenumber="getPhoneNumber">
-      授权登录
-    </button>
-    <button v-else class="login_btn" @click="login">授权登录</button>
-    <view class="cancle" :class="{ green: !authInfo }" @click="cancle">取消</view>
-    <text class="tip" v-if="!authInfo">请完成微信授权以继续使用</text>
-    <text class="tip" v-else>为了体验更多内容并确保账户安全，请先登录</text>
-    <text class="varsions" v-if="version">{{ version }}</text>
+  <view class="login-box">
+    <image
+      class="avatar-wrapper"
+      :src="avatarUrl"
+      @click="chooseImage()"
+      mode="aspectFill"
+    ></image>
+    <input
+      type="text"
+      class="nick-input"
+      v-model="nickName"
+      placeholder="请输入昵称"
+    />
+    <view class="gender-box">
+      <radio-group @change="changeGender">
+        <label> <radio value="1" /><text>男</text> </label>
+        <label>
+          <radio class="gender-famale" value="0" /><text>女</text>
+        </label>
+      </radio-group>
+    </view>
+    <button class="login_btn" v-if="isUpdate" :class="{ green: true }" @click="register">更新</button>
+    <button class="login_btn" v-else :class="{ green: true }" @click="register">注册</button>
+    <view class="cancle" :class="{ green: true }" @click="cancle">取消</view
+    >
   </view>
 </template>
 
 <script>
-import { WxLogin, uploadURL, download } from "@/api/api.js";
-//import { mapMutations, mapGetters, mapActions } from 'vuex'
+import { register, login, uploadURL, downloadURL } from "@/api/api.js";
 export default {
   data() {
     return {
-      optionUrl: "",
+      isUpdate: false,
       isLogin: false,
       userInfo: {},
-      authInfo: null,
-      getCodeInfo: null,
-      storeInfo: {},
-      canIUseGetUserProfile: false,
+      authInfo: {},
+      nickName: '',
+      gender: 0,
       avatarUrl:
         "https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0",
     };
   },
   computed: {
-    //...mapGetters(["store", "storeConfig"]),
-    //version() {
-    //  return getApp().globalData.version;
-    //},
+
   },
   onLoad(e) {
-    // this.userInfo = uni.getStorageSync("uerInfo") || {};
-    // this.authInfo = uni.getStorageSync("authInfo");
-    // this.optionUrl = e.curUrl;
-    // this.canIUseGetUserProfile = wx.canIUse("getUserProfile");
+    this.userInfo = uni.getStorageSync('userInfo') || {}
+    this.authInfo = uni.getStorageSync('authInfo')
+    if(!this.userInfo.token)
+      this.login()
+      let { user } = this.userInfo
+    if(user) {
+      this.avatarUrl = user.avatar
+      this.nickName = user.nickName
+      this.gender = user.gender
+      this.isUpdate = true
+    }
   },
   onUnload() {
-    // getApp().globalData.isExpired = false;
-    // var that = this;
-    // if (
-    //   !that.isLogin &&
-    //   (that.optionUrl == "pages/my/my" || that.optionUrl == "pages/cart/cart")
-    // ) {
-    //   getApp().globalData.toLogin = false;
-    //   uni.reLaunch({
-    //     url: "/pages/index/index/index",
-    //   });
-    // }
+
   },
   methods: {
-    //...mapActions(["setStore", "setStoreConfig"]),
-    onChooseAvatar(e) {
-      debugger;
-      this.avatarUrl = e.detail;
-    },
     getToken(e, msg) {
       var that = this;
       uni.showLoading({
@@ -75,39 +70,43 @@ export default {
       uni.login({
         provider: "weixin",
         success: function (loginRes) {
-          WxLogin({
-            code: loginRes.code,
+          login({
+            code: loginRes.code
           })
             .then((res) => {
-              if (res.data.error) {
-                uni.showToast({
-                  title: res.data.error.message,
+              if (res.data.statusCode == 0) {
+                  that.$set(that.userInfo, "user", res.data.data.userInfo);
+                  that.$set(that.userInfo, "token", res.data.data.token);
+                  uni.setStorageSync("userInfo", that.userInfo);
+                  if (res.data.data.isRegister) {
+                    that.isLogin = true;
+                    uni.hideLoading();
+                    if (msg) {
+                      uni.showToast({
+                        title: msg,
+                        icon: "none",
+                        duration: 1500,
+                      });
+                    } else {                 
+                      uni.showToast({
+                        title: "登录成功",
+                        icon: "success",
+                        duration: 1500,
+                      });
+                      uni.navigateTo({
+                        url:`/pages/index/index`
+                      })
+                    }
+                  }else{
+                    uni.hideLoading();
+                  }
+              }else {
+                  uni.showToast({
+                  title: res.data.message,
                   icon: "none",
                   duration: 3000,
                 });
                 return;
-              }
-              that.isLogin = true;
-              that.$set(that.userInfo, "token", res.data.value.Token);
-              uni.setStorageSync("uerInfo", that.userInfo);
-              that.setDefaltStore(res.data.value);
-              if (res.data.value.IsMember) {
-                uni.hideLoading();
-                if (msg) {
-                  uni.showToast({
-                    title: msg,
-                    icon: "none",
-                    duration: 1500,
-                  });
-                } else {
-                  uni.showToast({
-                    title: "登录成功",
-                    icon: "success",
-                    duration: 1500,
-                  });
-                }
-              } else {
-                that.registerWxUser(e);
               }
             })
             .catch((err) => {
@@ -129,106 +128,38 @@ export default {
         },
       });
     },
-    async registerWxUser(e) {
+    async register() {
       var that = this;
-      let { encryptedData, iv } = e.detail;
-      // 获取保存的门店ID
-      let shopId = uni.getStorageSync("shopId");
-      // 获取二维码信息保存 如果成为分销员增加自己信息 只是注册成为会员只要上级分销员信息
-      let codeInfo = uni.getStorageSync("codeInfo") || {};
-      let queryScene = getApp().globalData.queryScene;
-      if (!codeInfo.sid && queryScene) {
-        // 如果url参数信息没获取到 重新获取
-        const result = await getByKey({
-          key: queryScene,
-        });
-        if (result.data.value) {
-          let arr = result.data.value.split("&");
-          codeInfo = {};
-          let name, val;
-          arr.forEach((e) => {
-            name = e.split("=")[0];
-            val = e.split("=")[1];
-            codeInfo[name] = val;
-          });
-          uni.setStorageSync("codeInfo", codeInfo);
-        }
-      }
-      let keyInfo = {
-        Target: 0,
-        TargetType: 0,
-        StoreId: 0,
-      };
-      keyInfo.Target = codeInfo.tid;
-      keyInfo.TargetType = codeInfo.t;
-      keyInfo.StoreId = codeInfo.sid;
-      keyInfo.NearbyStoreId = shopId;
       let registerWxUserInfo = {
-        PhoneEncryptedData: encryptedData,
-        PhoneIV: iv,
-        EncryptedData: this.authInfo.encryptedData,
-        IV: this.authInfo.iv,
-        ExtendInfo1: keyInfo,
-      };
-      registerWxUser(registerWxUserInfo).then((res) => {
+         Avatar : that.avatarUrl,
+         NickName : that.nickName,
+         Gender : that.gender
+      };    
+      register(registerWxUserInfo).then((res) => {
         uni.hideLoading();
-        if (res.data.error) {
-          uni.removeStorageSync("uerInfo");
-          that.userInfo = {};
-          if (res.data.error.message.indexOf("授权用户信息失败") != -1) {
-            uni.removeStorageSync("authInfo");
-            that.authInfo = null;
-          }
-          uni.showToast({
-            title: res.data.error.message,
-            icon: "none",
-            duration: 3000,
-          });
-          return;
-        }
-        if (that.userInfo.isMember) {
-          uni.showToast({
-            title: "登录成功",
+        if (res.data.statusCode == 0) {
+            uni.showToast({
+            title: res.data.message,
             icon: "none",
             duration: 1500,
           });
-        }
-        that.setDefaltStore(res.data.value);
-        if (that.userInfo.isMember) {
-          uni.showToast({
-            title: "登录成功",
-            icon: "none",
-            duration: 1500,
-          });
-          setTimeout(function () {
-            uni.navigateBack();
-          }, 1500);
-        } else {
-          that.getToken(e, res.data.value.message);
+          that.$set(that.userInfo, "user", res.data.data.userInfo);
+          uni.setStorageSync("userInfo", that.userInfo);
+          uni.navigateTo({
+            url: `/pages/index/index`
+          })
         }
       });
     },
     cancle() {
-      let that = this;
-      if (
-        !that.isLogin &&
-        (that.optionUrl == "pages/my/my" || that.optionUrl == "pages/cart/cart")
-      ) {
-        getApp().globalData.toLogin = false;
-        uni.reLaunch({
-          url: "/pages/index/index",
-        });
-      } else {
-        uni.navigateBack();
-      }
+      uni.navigateBack();
     },
     login() {
       this.getToken();
     },
-    //微信接口
     getuserProfile(e) {
       wx.getUserProfile({
-        desc: "用于完善会员资料", // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
+        desc: "用于完善会员资料", 
         success: async (res) => {
           if ((res.errMsg = "getUserProfile:ok")) {
             this.authInfo = {};
@@ -248,7 +179,6 @@ export default {
         error(e) {},
       });
     },
-    //微信接口
     getuserinfo(e) {
       if (e.detail.errMsg == "getUserInfo:ok") {
         this.authInfo = {};
@@ -276,56 +206,56 @@ export default {
         });
       }
     },
-    selectImage() {
-      //添加照片
-      let that = this
-      let tempFilePaths
+    chooseImage() {
+      let that = this;
+      let tempFilePaths;
       uni.chooseImage({
         count: 1, // 可选张数
-        sizeType: ['compressed'], // 可以指定是原图还是压缩图，默认二者都有
-        sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+        sizeType: ["compressed"], // 可以指定是原图还是压缩图，默认二者都有
+        sourceType: ["album", "camera"], // 可以指定来源是相册还是相机，默认二者都有
         success: function (res) {
           // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
-          tempFilePaths = res.tempFilePaths
-         that.upload(tempFilePaths)
-        }
-      })
+          tempFilePaths = res.tempFilePaths;
+          that.upload(tempFilePaths);
+        },
+      });
+    },
+    changeGender(e){
+      this.gender = e.detail.value;
     },
     upload(imgPaths) {
-      var that = this
+      var that = this;
       uni.showToast({
-        icon: 'loading',
-        title: '正在上传'
-      })
-      debugger
-      this.avatarUrl = imgPaths[0];
+        icon: "loading",
+        title: "正在上传",
+      });
+      that.avatarUrl = imgPaths[0];
       uni.uploadFile({
         url: uploadURL,
         filePath: imgPaths[0],
-        name: 'file', //示例，使用顺序给文件命名
+        name: "file", //示例，使用顺序给文件命名
         success: function (res) {
-          if (res.statusCode == 200) {
-            let data = JSON.parse(res.data)
-            if (data.error) {
-              uni.showToast({
-                title: data.error,
-                mask: true,
-                icon: 'none',
-                duration: 2000
-              })
-              return
-            } else {
-              this.avatarUrl = res.data.url;
+          debugger
+           if(res.statusCode == 200) {
+              var data = JSON.parse(res.data);
+              that.avatarUrl = data.data.url;
             }
+            else {
+              if (res.message) {
+                uni.showToast({
+                  title: res.message,
+                  mask: true,
+                  icon: "none",
+                  duration: 2000,
+                });
+                return;
+              }
           }
         },
-        fail: function (e) {
-        },
-        complete: function (e) {
-        }
-      })
+        fail: function (e) {},
+        complete: function (e) {},
+      });
     }
-    // ...mapMutations(["setInfo"]),
   },
 };
 </script>
@@ -338,7 +268,7 @@ body {
   background-color: #fff;
 }
 
-.login_box {
+.login-box {
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -348,10 +278,21 @@ body {
     width: 126rpx;
     height: 126rpx;
     border-radius: 50%;
+    margin-top: 10px;
   }
 
   .nick-input {
     font-size: 32rpx;
+    margin-top: 30rpx;
+  }
+
+  .gender-box {
+    margin-top: 30rpx;
+    align-items: flex-end;
+
+    .gender-famale {
+      margin-left: 30rpx;
+    }
   }
 
   .headerPhotoBox {

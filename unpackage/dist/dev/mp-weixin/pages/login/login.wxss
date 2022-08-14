@@ -29,21 +29,30 @@ body {
   align-items: center;
   background-color: #fff;
 }
-.login_box {
+.login-box {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.login_box .avatar-wrapper {
+.login-box .avatar-wrapper {
   width: 126rpx;
   height: 126rpx;
   border-radius: 50%;
+  margin-top: 10px;
 }
-.login_box .nick-input {
+.login-box .nick-input {
   font-size: 32rpx;
+  margin-top: 30rpx;
 }
-.login_box .headerPhotoBox {
+.login-box .gender-box {
+  margin-top: 30rpx;
+  align-items: flex-end;
+}
+.login-box .gender-box .gender-famale {
+  margin-left: 30rpx;
+}
+.login-box .headerPhotoBox {
   border-radius: 50%;
   overflow: hidden;
   width: 126rpx;
@@ -51,7 +60,7 @@ body {
   margin-top: 250rpx;
   margin-bottom: 26rpx;
 }
-.login_box .login_btn {
+.login-box .login_btn {
   margin-top: 120rpx;
   background: red;
   width: 80%;
@@ -59,28 +68,28 @@ body {
   font-size: 30rpx;
   line-height: 88rpx;
 }
-.login_box .login_btn.green {
+.login-box .login_btn.green {
   background-color: #52a936;
 }
-.login_box .tip {
+.login-box .tip {
   color: #9b9b9b;
   font-size: 24rpx;
   position: fixed;
   bottom: 100rpx;
   text-align: center;
 }
-.login_box .varsions {
+.login-box .varsions {
   color: #9b9b9b;
   font-size: 24rpx;
   position: fixed;
   bottom: 50rpx;
   text-align: center;
 }
-.login_box .cancle {
+.login-box .cancle {
   text-align: center;
   margin-top: 40rpx;
   color: red;
 }
-.login_box .cancle.green {
+.login-box .cancle.green {
   color: #52a936;
 }

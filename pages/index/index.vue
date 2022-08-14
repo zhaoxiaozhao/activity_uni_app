@@ -1,6 +1,6 @@
 <template>
   <view class="content">
-    <button @click="gotoLogin">去登录</button>
+    <button @click="gotoRegister">更新</button>
   </view>
 </template>
 
@@ -11,13 +11,20 @@ export default {
       title: "Hello",
     };
   },
-  onLoad() {},
-  methods: {
-    gotoLogin() {
+  onLoad() {
+    let { token } = uni.getStorageSync('userInfo')
+    if(!token) {
       uni.navigateTo({
         url: `/pages/login/login`,
       });
-    },
+    }
+  },
+  methods: {
+    gotoRegister(){
+      uni.navigateTo({
+        url: `/pages/login/login`,
+      });
+    }
   },
 };
 </script>

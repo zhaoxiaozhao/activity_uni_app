@@ -8,26 +8,32 @@ require("../../utils/utils.js");
 const _sfc_main = {
   data() {
     return {
-      optionUrl: "",
+      isUpdate: false,
       isLogin: false,
       userInfo: {},
-      authInfo: null,
-      getCodeInfo: null,
-      storeInfo: {},
-      canIUseGetUserProfile: false,
+      authInfo: {},
+      nickName: "",
+      gender: 0,
       avatarUrl: "https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0"
     };
   },
   computed: {},
   onLoad(e) {
+    this.userInfo = common_vendor.index.getStorageSync("userInfo") || {};
+    this.authInfo = common_vendor.index.getStorageSync("authInfo");
+    if (!this.userInfo.token)
+      this.login();
+    let { user } = this.userInfo;
+    if (user) {
+      this.avatarUrl = user.avatar;
+      this.nickName = user.nickName;
+      this.gender = user.gender;
+      this.isUpdate = true;
+    }
   },
   onUnload() {
   },
   methods: {
-    onChooseAvatar(e) {
-      debugger;
-      this.avatarUrl = e.detail;
-    },
     getToken(e, msg) {
       var that = this;
       common_vendor.index.showLoading({
@@ -36,38 +42,42 @@ const _sfc_main = {
       common_vendor.index.login({
         provider: "weixin",
         success: function(loginRes) {
-          api_api.WxLogin({
+          api_api.login({
             code: loginRes.code
           }).then((res) => {
-            if (res.data.error) {
+            if (res.data.statusCode == 0) {
+              that.$set(that.userInfo, "user", res.data.data.userInfo);
+              that.$set(that.userInfo, "token", res.data.data.token);
+              common_vendor.index.setStorageSync("userInfo", that.userInfo);
+              if (res.data.data.isRegister) {
+                that.isLogin = true;
+                common_vendor.index.hideLoading();
+                if (msg) {
+                  common_vendor.index.showToast({
+                    title: msg,
+                    icon: "none",
+                    duration: 1500
+                  });
+                } else {
+                  common_vendor.index.showToast({
+                    title: "\u767B\u5F55\u6210\u529F",
+                    icon: "success",
+                    duration: 1500
+                  });
+                  common_vendor.index.navigateTo({
+                    url: `/pages/index/index`
+                  });
+                }
+              } else {
+                common_vendor.index.hideLoading();
+              }
+            } else {
               common_vendor.index.showToast({
-                title: res.data.error.message,
+                title: res.data.message,
                 icon: "none",
                 duration: 3e3
               });
               return;
-            }
-            that.isLogin = true;
-            that.$set(that.userInfo, "token", res.data.value.Token);
-            common_vendor.index.setStorageSync("uerInfo", that.userInfo);
-            that.setDefaltStore(res.data.value);
-            if (res.data.value.IsMember) {
-              common_vendor.index.hideLoading();
-              if (msg) {
-                common_vendor.index.showToast({
-                  title: msg,
-                  icon: "none",
-                  duration: 1500
-                });
-              } else {
-                common_vendor.index.showToast({
-                  title: "\u767B\u5F55\u6210\u529F",
-                  icon: "success",
-                  duration: 1500
-                });
-              }
-            } else {
-              that.registerWxUser(e);
             }
           }).catch((err) => {
             common_vendor.index.hideLoading();
@@ -88,92 +98,31 @@ const _sfc_main = {
         }
       });
     },
-    async registerWxUser(e) {
+    async register() {
       var that = this;
-      let { encryptedData, iv } = e.detail;
-      let shopId = common_vendor.index.getStorageSync("shopId");
-      let codeInfo = common_vendor.index.getStorageSync("codeInfo") || {};
-      let queryScene = getApp().globalData.queryScene;
-      if (!codeInfo.sid && queryScene) {
-        const result = await getByKey({
-          key: queryScene
-        });
-        if (result.data.value) {
-          let arr = result.data.value.split("&");
-          codeInfo = {};
-          let name, val;
-          arr.forEach((e2) => {
-            name = e2.split("=")[0];
-            val = e2.split("=")[1];
-            codeInfo[name] = val;
-          });
-          common_vendor.index.setStorageSync("codeInfo", codeInfo);
-        }
-      }
-      let keyInfo = {
-        Target: 0,
-        TargetType: 0,
-        StoreId: 0
-      };
-      keyInfo.Target = codeInfo.tid;
-      keyInfo.TargetType = codeInfo.t;
-      keyInfo.StoreId = codeInfo.sid;
-      keyInfo.NearbyStoreId = shopId;
       let registerWxUserInfo = {
-        PhoneEncryptedData: encryptedData,
-        PhoneIV: iv,
-        EncryptedData: this.authInfo.encryptedData,
-        IV: this.authInfo.iv,
-        ExtendInfo1: keyInfo
+        Avatar: that.avatarUrl,
+        NickName: that.nickName,
+        Gender: that.gender
       };
-      registerWxUser(registerWxUserInfo).then((res) => {
+      api_api.register(registerWxUserInfo).then((res) => {
         common_vendor.index.hideLoading();
-        if (res.data.error) {
-          common_vendor.index.removeStorageSync("uerInfo");
-          that.userInfo = {};
-          if (res.data.error.message.indexOf("\u6388\u6743\u7528\u6237\u4FE1\u606F\u5931\u8D25") != -1) {
-            common_vendor.index.removeStorageSync("authInfo");
-            that.authInfo = null;
-          }
+        if (res.data.statusCode == 0) {
           common_vendor.index.showToast({
-            title: res.data.error.message,
-            icon: "none",
-            duration: 3e3
-          });
-          return;
-        }
-        if (that.userInfo.isMember) {
-          common_vendor.index.showToast({
-            title: "\u767B\u5F55\u6210\u529F",
+            title: res.data.message,
             icon: "none",
             duration: 1500
           });
-        }
-        that.setDefaltStore(res.data.value);
-        if (that.userInfo.isMember) {
-          common_vendor.index.showToast({
-            title: "\u767B\u5F55\u6210\u529F",
-            icon: "none",
-            duration: 1500
+          that.$set(that.userInfo, "user", res.data.data.userInfo);
+          common_vendor.index.setStorageSync("userInfo", that.userInfo);
+          common_vendor.index.navigateTo({
+            url: `/pages/index/index`
           });
-          setTimeout(function() {
-            common_vendor.index.navigateBack();
-          }, 1500);
-        } else {
-          that.getToken(e, res.data.value.message);
         }
       });
     },
     cancle() {
-      let that = this;
-      if (!that.isLogin && (that.optionUrl == "pages/my/my" || that.optionUrl == "pages/cart/cart")) {
-        getApp().globalData.toLogin = false;
-        common_vendor.index.reLaunch({
-          url: "/pages/index/index"
-        });
-      } else {
-        common_vendor.index.navigateBack();
-      }
+      common_vendor.index.navigateBack();
     },
     login() {
       this.getToken();
@@ -228,7 +177,7 @@ const _sfc_main = {
         });
       }
     },
-    selectImage() {
+    chooseImage() {
       let that = this;
       let tempFilePaths;
       common_vendor.index.chooseImage({
@@ -241,30 +190,34 @@ const _sfc_main = {
         }
       });
     },
+    changeGender(e) {
+      this.gender = e.detail.value;
+    },
     upload(imgPaths) {
+      var that = this;
       common_vendor.index.showToast({
         icon: "loading",
         title: "\u6B63\u5728\u4E0A\u4F20"
       });
-      debugger;
-      this.avatarUrl = imgPaths[0];
+      that.avatarUrl = imgPaths[0];
       common_vendor.index.uploadFile({
         url: api_api.uploadURL,
         filePath: imgPaths[0],
         name: "file",
         success: function(res) {
+          debugger;
           if (res.statusCode == 200) {
-            let data = JSON.parse(res.data);
-            if (data.error) {
+            var data = JSON.parse(res.data);
+            that.avatarUrl = data.data.url;
+          } else {
+            if (res.message) {
               common_vendor.index.showToast({
-                title: data.error,
+                title: res.message,
                 mask: true,
                 icon: "none",
                 duration: 2e3
               });
               return;
-            } else {
-              this.avatarUrl = res.data.url;
             }
           }
         },
@@ -279,27 +232,18 @@ const _sfc_main = {
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   return common_vendor.e({
     a: $data.avatarUrl,
-    b: common_vendor.o(($event) => $options.selectImage()),
-    c: !$data.authInfo && $data.canIUseGetUserProfile
-  }, !$data.authInfo && $data.canIUseGetUserProfile ? {
-    d: common_vendor.o((...args) => $options.getuserProfile && $options.getuserProfile(...args))
-  } : !$data.authInfo && !$data.canIUseGetUserProfile ? {
-    f: common_vendor.o((...args) => $options.getuserinfo && $options.getuserinfo(...args))
-  } : !$data.userInfo.isMember ? {
-    h: common_vendor.o((...args) => $options.getPhoneNumber && $options.getPhoneNumber(...args))
+    b: common_vendor.o(($event) => $options.chooseImage()),
+    c: $data.nickName,
+    d: common_vendor.o(($event) => $data.nickName = $event.detail.value),
+    e: common_vendor.o((...args) => $options.changeGender && $options.changeGender(...args)),
+    f: $data.isUpdate
+  }, $data.isUpdate ? {
+    g: common_vendor.o((...args) => $options.register && $options.register(...args))
   } : {
-    i: common_vendor.o((...args) => $options.login && $options.login(...args))
+    h: common_vendor.o((...args) => $options.register && $options.register(...args))
   }, {
-    e: !$data.authInfo && !$data.canIUseGetUserProfile,
-    g: !$data.userInfo.isMember,
-    j: !$data.authInfo ? 1 : "",
-    k: common_vendor.o((...args) => $options.cancle && $options.cancle(...args)),
-    l: !$data.authInfo
-  }, !$data.authInfo ? {} : {}, {
-    m: _ctx.version
-  }, _ctx.version ? {
-    n: common_vendor.t(_ctx.version)
-  } : {});
+    i: common_vendor.o((...args) => $options.cancle && $options.cancle(...args))
+  });
 }
 var MiniProgramPage = /* @__PURE__ */ common_vendor._export_sfc(_sfc_main, [["render", _sfc_render], ["__file", "D:/Source/Repos/activity_uni_app/activity_uni_app/pages/login/login.vue"]]);
 wx.createPage(MiniProgramPage);

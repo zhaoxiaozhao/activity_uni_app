@@ -35,7 +35,8 @@ http.setConfig((config) => {
   return config;
 });
 http.interceptor.request((config, cancel) => {
-  let { token } = common_vendor.index.getStorageSync("uerInfo");
+  debugger;
+  let { token } = common_vendor.index.getStorageSync("userInfo");
   config.header = __spreadValues({}, config.header);
   if (token) {
     config.header.token = token;
