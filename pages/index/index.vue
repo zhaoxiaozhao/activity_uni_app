@@ -1,6 +1,45 @@
 <template>
   <view class="content">
-    <button @click="gotoRegister">更新</button>
+    <!-- <button @click="gotoRegister">更新</button>
+    <button @click="gotoActivity">添加活动</button> -->
+    <view class="uni-flex uni-row">
+      <view class="flex-item">
+        <title class="news-box-title">最新动态</title>
+        <view class="news-box">
+          <view class="news-item">
+            <view><image class="news-item-avatar" src="../../static/images/1.jpg" /></view>
+            <view><label class="news-label uni-bg-green">闲置</label>
+            <span class="news-item-content">九成新ps5游戏机...</span></view>
+          </view>
+          <view class="news-item">
+            <view><image class="news-item-avatar" src="../../static/images/2.jpg" /></view>
+            <view><label class="news-label uni-bg-dark-blue">活动</label>
+            <span class="news-item-content">青龙湖公园露营...</span></view>
+          </view>
+          <view class="news-item">
+            <view><image class="news-item-avatar" src="../../static/images/3.jpg" /></view>
+            <view><label class="news-label uni-bg-bright-blue">话题</label>
+            <span class="news-item-content">如何看待微博热...</span></view>
+          </view>
+        </view>
+      </view>
+      <view class="flex-item box">
+        <view class="flex">
+          <view><span class="news-box-title">寻宝</span> </view>
+          <view><image class="box-logo" :src="treasureLogoUrl"></image></view>
+        </view>
+        <image class="box-cover" :src="coverUrl"></image>
+      </view>
+    </view>
+    <view class="uni-flex uni-row">
+      <view class="flex-item box">
+        <view class="flex">
+          <view><span class="news-box-title">活动</span></view>
+          <view><image class="box-logo" :src="treasureLogoUrl"></image></view>
+        </view>
+        <image class="box-cover" :src="coverUrl"></image>
+      </view>
+    </view>
   </view>
 </template>
 
@@ -9,22 +48,29 @@ export default {
   data() {
     return {
       title: "Hello",
+      treasureLogoUrl: "../../static/images/treasure.png",
+      coverUrl: "../../static/images/cover01.jpg",
     };
   },
   onLoad() {
-    let { token } = uni.getStorageSync('userInfo')
-    if(!token) {
+    let { token } = uni.getStorageSync("userInfo");
+    if (!token) {
       uni.navigateTo({
         url: `/pages/login/login`,
       });
     }
   },
   methods: {
-    gotoRegister(){
+    gotoRegister() {
       uni.navigateTo({
         url: `/pages/login/login`,
       });
-    }
+    },
+    gotoActivity() {
+      uni.navigateTo({
+        url: `/pages/activity/activity`,
+      });
+    },
   },
 };
 </script>
@@ -37,22 +83,102 @@ export default {
   justify-content: center;
 }
 
-.logo {
-  height: 200rpx;
-  width: 200rpx;
-  margin-top: 200rpx;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 50rpx;
-}
-
-.text-area {
+.uni-flex {
   display: flex;
-  justify-content: center;
+  width: 100%;
 }
 
-.title {
-  font-size: 36rpx;
-  color: #8f8f94;
+.uni-row {
+  width: 100%;
+  height: 300rpx;
+  margin-top: 10px;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-item {
+  width: 50%;
+  align-items: center;
+  margin-top: 20rpx;
+  margin-left: 20rpx;
+}
+
+.news-box {
+  padding-top: 10rpx;
+}
+
+.news-box-title {
+  font-size: 13px;
+}
+
+.news-box-item {
+  padding: 5rpx;
+}
+
+.news-label {
+  border: 1px;
+  border-radius: 4px;
+  padding: 10rpx;
+  font-size: 11px;
+  color: white;
+  vertical-align: middle;
+}
+
+.news-item {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.news-item-avatar {
+    width: 50rpx;
+    height: 50rpx;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.news-item-content {
+  font-size: 11px;
+  margin-left: 5px;
+}
+
+.uni-bg-green {
+  background-color: rgba(14, 248, 52, 1);
+}
+
+.uni-bg-dark-blue {
+  background-color: rgba(47, 31, 91, 1);
+}
+
+.uni-bg-bright-blue {
+  background-color: rgba(7, 207, 207, 1);
+}
+
+.news-box-title-share {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  left: 259px;
+  top: 72px;
+  background-image: "./static/icons/Forward.png";
+}
+
+.box-logo {
+  width: 16px;
+  height: 16px;
+  margin-left: 5px;
+}
+
+.box {
+  margin-right: 20rpx;
+}
+
+.box-cover {
+  width: 100%;
+  height: 100%;
+  border: 1px;
+  border-radius: 10px;
+  margin-top: 10rpx;
 }
 </style>
