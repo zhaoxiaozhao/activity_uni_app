@@ -2,6 +2,7 @@
   <view class="content">
     <!-- <button @click="gotoRegister">更新</button>
     <button @click="gotoActivity">添加活动</button> -->
+    <activity-top class="activity-top"></activity-top>
     <view class="uni-flex uni-row">
       <view class="flex-item">
         <title class="news-box-title">最新动态</title>
@@ -28,28 +29,35 @@
           <view><span class="news-box-title">寻宝</span> </view>
           <view><image class="box-logo" :src="treasureLogoUrl"></image></view>
         </view>
-        <image class="box-cover" :src="coverUrl"></image>
+        <image class="box-cover" :src="searchCoverUrl"></image>
       </view>
     </view>
     <view class="uni-flex uni-row">
-      <view class="flex-item box">
+      <view class="flex-item box" @click="gotoActivity">
         <view class="flex">
           <view><span class="news-box-title">活动</span></view>
           <view><image class="box-logo" :src="treasureLogoUrl"></image></view>
         </view>
-        <image class="box-cover" :src="coverUrl"></image>
+        <image class="box-cover" :src="activityCoverUrl"></image>
       </view>
     </view>
   </view>
 </template>
 
 <script>
+
+import activitytop from '@/components/activity-top/activity-top.vue'
+
 export default {
+ components: {
+    activitytop
+  },
   data() {
     return {
       title: "Hello",
       treasureLogoUrl: "../../static/images/treasure.png",
-      coverUrl: "../../static/images/cover01.jpg",
+      activityCoverUrl: "../../static/images/4.png",
+      searchCoverUrl:"../../static/images/5.jpg"
     };
   },
   onLoad() {
@@ -65,7 +73,7 @@ export default {
       uni.navigateTo({
         url: `/pages/login/login`,
       });
-    },
+    }, 
     gotoActivity() {
       uni.navigateTo({
         url: `/pages/activity/activity`,
@@ -75,11 +83,18 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
+
+.activity-top {
+  margin-top: 10px;
+  margin-left: 10px;
+  width: 100%;
+}
+
 .content {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: left;
   justify-content: center;
 }
 
