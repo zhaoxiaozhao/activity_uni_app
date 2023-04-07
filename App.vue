@@ -13,9 +13,10 @@
 </script>
 
 <style>
+	@import '/static/icons/iconfont.css';
 	/*每个页面公共css */
 	page {
-		background-color:#7351d0;
-		color: white;
+		background-color:#2F1F5B;
+		color: rgb(255, 255, 255);
 	}
 </style>

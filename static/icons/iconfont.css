@@ -1,0 +1,78 @@
+/* CDN 服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
+@font-face {
+  font-family: 'iconfont';  /* Project id 3952583 */
+  src: url('//at.alicdn.com/t/c/font_3952583_hgx89akka6v.woff2?t=1679235967631') format('woff2'),
+       url('//at.alicdn.com/t/c/font_3952583_hgx89akka6v.woff?t=1679235967631') format('woff'),
+       url('//at.alicdn.com/t/c/font_3952583_hgx89akka6v.ttf?t=1679235967631') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 16px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-back:before {
+  content: "\e61e";
+}
+
+.icon-picture:before {
+  content: "\e67c";
+}
+
+.icon-down-arrow:before {
+  content: "\e621";
+}
+
+.icon-add:before {
+  content: "\e613";
+}
+
+.icon-reduce:before {
+  content: "\e614";
+}
+
+.icon-fenxiang:before {
+  content: "\e631";
+}
+
+.icon-pen:before {
+  color: greenyellow;
+  content: "\e604";
+}
+
+.icon-file:before {
+  content: "\e756";
+}
+
+.icon-location:before {
+  color: greenyellow;
+  content: "\e606";
+}
+
+.icon-calendar:before {
+  color: greenyellow;
+  content: "\e752";
+}
+
+.icon-link:before {
+  content: "\e759";
+}
+
+.icon-more:before {
+  content: "\e75c";
+}
+
+.icon-share:before {
+  content: "\e760";
+}
+
+.icon-trash:before {
+  content: "\e763";
+}
+
+.icon-text:before {
+  content: "\e60b";
+}

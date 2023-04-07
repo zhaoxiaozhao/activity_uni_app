@@ -1,74 +1,176 @@
 <template>
   <view>
-    <view class="title-box">
-      <input
-        class="title-input"
-        type="text"
-        v-if="isEdit"
-        @input="onInput"
-        :value="title"
-      />
-      <h3 class="title-h3" v-else>{{ title }}</h3>
-      <image
-        class="icon-pen"
-        @click="editTitle()"
-        src="../../static/icons/edit_pen.png"
-      ></image>
-    </view>
-    <view class="cover-box">
-      <image class="cover-img" src="../../static/images/4.png" />
-    </view>
-    <view class="time-box box-margin">
-      <label>活动时间：</label>
-      <image
-        class="size"
-        @click="onShowDatePicker('rangetime')"
-        src="../../static/icons/date_range.png"
-      ></image>
-      <label class="font-size">{{ rangetime[0] }} ~ {{ rangetime[1] }}</label>
-      <view>
-        <mx-date-picker
-          :show="showPicker"
-          :type="type"
-          :value="value"
-          :show-tips="true"
-          :begin-text="'开始'"
-          :end-text="'结束'"
-          :show-seconds="true"
-          @confirm="onSelected"
-          @cancel="onSelected"
+    <scroll-view :scroll-top="scrollTop" scroll-y="true" class="scroll-Y">
+      <view class="title-box box-margin">
+        <label for="">{{ title }}</label
+        ><text
+          class="iconfont icon-pen"
+          style="padding-left: 10rpx; font-size: 12px; padding-top: 6px"
+          @click="inputDialogToggle"
+        ></text>
+      </view>
+      <view class="cover-box">
+        <image class="cover-img" src="../../static/images/4.png" />
+        <image
+          src="../../static/icons/Img_box_fill.png"
+          style="width: 50rpx; height: 50rpx; position: fixed; top: 180rpx"
         />
       </view>
-    </view>
-    <view class="location-box box-margin">
-      <label>活动地点：</label>
-      <image class="size" src="../../static/icons/Location.png" @click="onChooseLocation"></image>
-      <label class="font-size">{{location}}</label>
-    </view>
-    <view class="object-box box-margin">
-      <label>活动对象：</label>
-    </view>
-    <view class="content-box box-margin">
-      <label>活动内容：</label>
-      <textarea
-        class="context-input"
-        v-if="isEdit"
-        v-model="content"
-      ></textarea>
-      <p v-else>
-        {{ content }}
-      </p>
-      <image class="icon-pen" src="../../static/icons/edit_pen.png"></image>
-    </view>
+      <view class="time-box box-margin">
+        <label>活动时间：</label>
+        <text
+          class="iconfont icon-calendar"
+          @click="onShowDatePicker('rangetime')"
+          style="padding-right: 10rpx"
+        ></text>
+        <label class="font-size">{{ rangetime[0] }} ~ {{ rangetime[1] }}</label>
+        <view>
+          <mx-date-picker
+            :show="showPicker"
+            :type="type"
+            :value="value"
+            :show-tips="true"
+            :begin-text="'开始'"
+            :end-text="'结束'"
+            :show-seconds="true"
+            @confirm="onSelected"
+            @cancel="onSelected"
+          />
+        </view>
+      </view>
+      <view class="location-box box-margin">
+        <label>活动地点：</label>
+        <text
+          class="iconfont icon-location"
+          @click="onChooseLocation"
+          style="padding-right: 10rpx"
+        ></text>
+        <label class="font-size">{{ location }}</label>
+      </view>
+      <view class="content-box box-margin">
+        <label>活动内容：</label>
+        <text
+          style="
+            padding-top: 10rpx;
+            font-size: 14px;
+            padding-right: 20rpx;
+            line-height: 200%;
+          "
+          @click="editContent"
+        >
+          {{ content }}
+          <text
+            class="iconfont icon-pen"
+            style="padding-left: 5rpx; font-size: 12px; padding-top: 6px"
+          ></text
+        ></text>
+      </view>
+      <view class="add-box box-margin" v-if="listLength == 0">
+        <text class="iconfont icon-add" style="font-size: 26px"></text>
+        <text
+          class="iconfont icon-text"
+          style="font-size: 26px; padding-left: 10rpx"
+          @click="addContent(null)"
+        ></text>
+        <text
+          class="iconfont icon-picture"
+          style="font-size: 26px; padding-left: 10rpx"
+          @click="chooseImage"
+        ></text>
+      </view>
+      <view v-else v-for="item in list" :key="item.id">
+        <view class="add-box box-margin">
+          <text class="iconfont icon-add" style="font-size: 26px"></text>
+          <text
+            class="iconfont icon-text"
+            style="font-size: 26px; padding-left: 10rpx"
+            @click="addContent(item)"
+          ></text>
+          <text
+            class="iconfont icon-picture"
+            style="font-size: 26px; padding-left: 10rpx"
+            @click="chooseImage"
+          ></text>
+          <text
+            class="iconfont icon-trash"
+            style="font-size: 26px; padding-left: 10rpx"
+            @click="deleteItem(item)"
+          ></text>
+        </view>
+        <view class="cover-box" v-if="item.type == 'image'">
+          <image class="cover-img" :src="item.value" />
+          <!-- <image
+            src="../../static/icons/Img_box_fill.png"
+            style="width: 50rpx; height: 50rpx; position: fixed; top: 180rpx"
+          /> -->
+        </view>
+        <view class="content-box box-margin" v-else>
+          <text
+            style="
+              padding-top: 10rpx;
+              font-size: 14px;
+              padding-right: 20rpx;
+              line-height: 200%;
+            "
+            @click="editContent"
+          >
+            {{ item.value }}
+            <text
+              class="iconfont icon-pen"
+              style="padding-left: 5rpx; font-size: 12px; padding-top: 6px"
+            ></text
+          ></text>
+        </view>
+      </view>
+
+      <view class="page-boot" style="">
+        <button
+          type="default"
+          style="
+            position: fixed;
+            bottom: 25rpx;
+            left: 38%;
+            right: 38%;
+            background-color: transparent;
+            border: 5rpx solid rgba(255, 255, 255, 1);
+            border-radius: 15rpx;
+            color: rgba(255, 255, 255, 1);
+            font-size: 26rpx;
+          "
+        >
+          保存
+        </button>
+      </view>
+    </scroll-view>
+    <uni-popup ref="inputDialog" type="dialog">
+      <uni-popup-dialog
+        ref="inputClose"
+        mode="input"
+        title="活动标题"
+        @value="title"
+        placeholder="请输入"
+        @confirm="dialogInputConfirm"
+      ></uni-popup-dialog>
+    </uni-popup>
+    <edit-popup
+      ref="editPopupRef"
+      @change="onContentChange"
+      @addEvent="onAddContent"
+      :content="content"
+    ></edit-popup>
   </view>
 </template>
 
 <script>
 import MxDatePicker from "@/components/mx-datepicker/mx-datepicker.vue";
+import editPopup from "@/components/edit-popup/edit-popup.vue";
 import { mapKey } from "@/api/base.js";
+import { uploadURL, downloadURL } from "@/api/api.js";
+
 export default {
   components: {
     MxDatePicker,
+    editPopup,
   },
   data() {
     return {
@@ -80,20 +182,132 @@ export default {
       rangetime: ["2023/03/01 14:00", "2023/03/06 13:59"],
       type: "rangetime",
       value: "",
-      location:"青龙湖湿地公园"
+      location: "青龙湖湿地公园",
+      list: [
+        {
+          id: 1,
+          sort: 1,
+          type: "image",
+          value: "../../static/images/4.png",
+        },
+        {
+          id: 2,
+          sort: 2,
+          type: "text",
+          value:
+            "徒步旅行、漂流和草坪游戏都是适合成年人的绝佳团体露营创意，但新颖的原创活动创意可以让您的露营之旅更上一层楼。每次您的团体一起露营时尝试新活动，或者为仅限成人的年度露营旅行",
+        },
+        {
+          id: 3,
+          sort: 3,
+          type: "image",
+          value: "../../static/images/5.jpg",
+        },
+      ],
     };
   },
   onLoad(e) {
-    this.getLocation()
+    this.getLocation();
+    uni.$on("setData", (res) => {
+      console.log(res.content);
+    });
+  },
+  computed: {
+    listLength() {
+      return this.list.length;
+    },
   },
   methods: {
     //添加图片
     addImage() {},
+    chooseImage() {
+      let that = this;
+      let tempFilePaths;
+      uni.chooseImage({
+        count: 1, // 可选张数
+        sizeType: ["compressed"], // 可以指定是原图还是压缩图，默认二者都有
+        sourceType: ["album", "camera"], // 可以指定来源是相册还是相机，默认二者都有
+        success: function (res) {
+          // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
+          tempFilePaths = res.tempFilePaths;
+          that.upload(tempFilePaths);
+        },
+      });
+    },
     editTitle() {
       this.isEdit = !this.isEdit;
     },
-    oninput(e) {
-      this.title = e.target.value;
+    inputDialogToggle() {
+      this.$refs.inputDialog.open();
+    },
+    dialogInputConfirm(val) {
+      uni.showLoading({
+        title: "3秒后会关闭",
+      });
+      let that = this;
+      setTimeout(() => {
+        uni.hideLoading();
+        console.log(val);
+        that.title = val;
+        // 关闭窗口后，恢复默认内容
+        this.$refs.inputDialog.close();
+      }, 3000);
+    },
+    editContent() {
+      this.$refs.editPopupRef.show();
+    },
+    addContent(data) {
+      this.$refs.editPopupRef.change({
+        sort: data == null ? 1 : data.sort,
+        value: "请输入",
+      });
+    },
+    deleteItem(data) {
+      let that = this;
+      var list2 = [];
+      that.list.forEach((element) => {
+        if (element.sort != data.sort) {
+          list2.push(element);
+        }
+      });
+      that.list = list2;
+    },
+    onAddContent(data) {
+      let that = this;
+      let list2 = [];
+      debugger;
+      if (that.list.length === 0) {
+        that.list.push({
+          id: 0,
+          sort: data.sort,
+          type: "text",
+          value: data.value,
+        });
+        return;
+      }
+
+      that.list.forEach((element) => {
+        if (element.sort >= data.sort) {
+          element.sort += 1;
+        }
+        list2.push(element);
+      });
+      list2.push({
+        id: 0,
+        sort: data.sort,
+        type: "text",
+        value: data.value,
+      });
+      list2.sort(function (a, b) {
+        return a.sort - b.sort;
+      });
+
+      that.list = list2;
+    },
+    onContentChange(data) {
+      debugger;
+      let that = this;
+      that.content = data;
     },
     onShowDatePicker(type) {
       //显示
@@ -113,7 +327,7 @@ export default {
       }
     },
     onChooseLocation() {
-      let that = this
+      let that = this;
       // 首先，你需要在腾讯地图开放平台申请一个key
       var key = "YOUR_KEY_HERE";
       // 调用uni.chooseLocation方法打开地图选择地址
@@ -138,6 +352,7 @@ export default {
       });
     },
     getLocation() {
+      let that = this;
       // 首先，你需要在腾讯地图开放平台申请一个key
       var key = "YOUR_KEY_HERE";
       // 然后，调用uni.getLocation方法获取当前位置的经纬度
@@ -154,11 +369,43 @@ export default {
               longitude: longitude,
             },
             success: function (res) {
-              this.location = res.result
+              that.location = res.result;
               console.log(res.result);
             },
           });
         },
+      });
+    },
+    upload(imgPaths) {
+      var that = this;
+      uni.showToast({
+        icon: "loading",
+        title: "正在上传",
+      });
+      that.avatarUrl = imgPaths[0];
+      uni.uploadFile({
+        url: uploadURL,
+        filePath: imgPaths[0],
+        name: "file", //示例，使用顺序给文件命名
+        success: function (res) {
+          debugger;
+          if (res.statusCode == 200) {
+            var data = JSON.parse(res.data);
+            that.avatarUrl = data.data.url;
+          } else {
+            if (res.message) {
+              uni.showToast({
+                title: res.message,
+                mask: true,
+                icon: "none",
+                duration: 2000,
+              });
+              return;
+            }
+          }
+        },
+        fail: function (e) {},
+        complete: function (e) {},
       });
     },
   },
@@ -170,12 +417,15 @@ export default {
   display: flex;
   justify-content: center;
   margin-top: 10rpx;
+  //padding: 10rpx;
 
   .title-input {
-    border: 1px solid #fbfbfb;
-    border-radius: 5px;
-    padding: 5px;
+    border: 1rpx solid #fbfbfb;
+    border-radius: 5rpx;
+    padding-left: 10rpx;
     font-size: 12px;
+    color: black;
+    background-color: white;
   }
   .title-input:focus {
     outline: none;
@@ -188,35 +438,46 @@ export default {
   height: 40rpx;
 }
 
+.icon-location {
+  color: #03fced;
+}
+
 .size {
-  width: 40rpx;
-  height: 40rpx;
+  width: 30rpx;
+  height: 30rpx;
 }
 
 .font-size {
-  font-size: 10px;
+  font-size: 25rpx;
 }
 
 .cover-box {
   display: flex;
   justify-content: center;
-  margin-top: 10rpx;
+  margin-top: 20rpx;
   .cover-img {
-    width: 334px;
+    width: 90%;
     height: 202px;
   }
 }
 .box-margin {
-  margin-top: 10rpx;
+  margin-top: 20rpx;
   margin-left: 32rpx;
+  margin-right: 20rpx;
+}
+
+.content-box {
+  margin-right: 20rpx;
 }
 
 .context-input {
-  width: 80%;
+  width: 95%;
   padding: 12px 20px;
   margin: 8px 0;
   box-sizing: border-box;
-  border: 2px solid #ccc;
-  border-radius: 4px;
+  border: 1rpx solid #fbfbfb;
+  background-color: white;
+  color: black;
+  border-radius: 5rpx;
 }
 </style>
