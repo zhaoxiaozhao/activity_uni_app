@@ -10,10 +10,11 @@
         ></text>
       </view>
       <view class="cover-box">
-        <image class="cover-img" src="../../static/images/4.png" />
+        <image class="cover-img" :src="cover" />
         <image
+          class="cover-icon"
           src="../../static/icons/Img_box_fill.png"
-          style="width: 50rpx; height: 50rpx; position: fixed; top: 180rpx"
+          @click="changeCover"
         />
       </view>
       <view class="time-box box-margin">
@@ -75,7 +76,7 @@
         <text
           class="iconfont icon-picture"
           style="font-size: 26px; padding-left: 10rpx"
-          @click="chooseImage"
+          @click="chooseImage(null)"
         ></text>
       </view>
       <view v-else v-for="item in list" :key="item.id">
@@ -89,7 +90,7 @@
           <text
             class="iconfont icon-picture"
             style="font-size: 26px; padding-left: 10rpx"
-            @click="chooseImage"
+            @click="addImage(item)"
           ></text>
           <text
             class="iconfont icon-trash"
@@ -99,10 +100,11 @@
         </view>
         <view class="cover-box" v-if="item.type == 'image'">
           <image class="cover-img" :src="item.value" />
-          <!-- <image
+          <image
+            class="cover-icon"
             src="../../static/icons/Img_box_fill.png"
-            style="width: 50rpx; height: 50rpx; position: fixed; top: 180rpx"
-          /> -->
+            @click="changeImage(item)"
+          />
         </view>
         <view class="content-box box-margin" v-else>
           <text
@@ -176,6 +178,7 @@ export default {
     return {
       isEdit: false,
       title: "活动标题",
+      cover: "../../static/images/4.png",
       content:
         "徒步旅行、漂流和草坪游戏都是适合成年人的绝佳团体露营创意，但新颖的原创活动创意可以让您的露营之旅更上一层楼。每次您的团体一起露营时尝试新活动，或者为仅限成人的年度露营旅行",
       showPicker: false,
@@ -218,9 +221,16 @@ export default {
     },
   },
   methods: {
-    //添加图片
-    addImage() {},
-    chooseImage() {
+    addImageCallBack(data) {
+      let that = this;
+      that.list.forEach((element) => {
+        if ((element.sort = data.sort)) {
+          debugger;
+          element.value = data;
+        }
+      });
+    },
+    chooseImage(data, type) {
       let that = this;
       let tempFilePaths;
       uni.chooseImage({
@@ -230,9 +240,21 @@ export default {
         success: function (res) {
           // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
           tempFilePaths = res.tempFilePaths;
-          that.upload(tempFilePaths);
+          that.upload(tempFilePaths, data, type);
         },
       });
+    },
+    //添加图片
+    addImage(data) {
+      this.chooseImage(data, 0);
+    },
+    //重新上传图片
+    changeImage(data) {
+      this.chooseImage(data, 1);
+    },
+    //更改封面
+    changeCover() {
+      this.chooseImage(null, 2);
     },
     editTitle() {
       this.isEdit = !this.isEdit;
@@ -376,22 +398,39 @@ export default {
         },
       });
     },
-    upload(imgPaths) {
+    upload(imgPaths, data, type) {
       var that = this;
       uni.showToast({
         icon: "loading",
         title: "正在上传",
       });
-      that.avatarUrl = imgPaths[0];
       uni.uploadFile({
         url: uploadURL,
         filePath: imgPaths[0],
         name: "file", //示例，使用顺序给文件命名
         success: function (res) {
-          debugger;
           if (res.statusCode == 200) {
-            var data = JSON.parse(res.data);
-            that.avatarUrl = data.data.url;
+            var data2 = JSON.parse(res.data);
+            if (type == 0) {
+              //add image
+              debugger;
+              that.list.push({
+                id: 0,
+                sort: data !== null ? data.sort : 0,
+                type: "image",
+                value: data2.data.url,
+              });
+            } else if (type == 1) {
+              //change image
+              that.list.forEach((element) => {
+                if (element.sort == data.sort) {
+                  element.value = data2.data.url;
+                }
+              });
+            } else {
+              //change master cover
+              that.cover = data2.data.url;
+            }
           } else {
             if (res.message) {
               uni.showToast({
@@ -408,6 +447,21 @@ export default {
         complete: function (e) {},
       });
     },
+    save() {
+      let that = this
+      let model = {
+          Title : that.title,
+          Cover : that.cover,
+          Content: that.content,
+          Start: that.rangetime[0],
+          End:that.rangetime[1],
+          Location: that.location,
+          Appendixs:list
+      }
+
+      
+
+    },
   },
 };
 </script>
@@ -417,7 +471,6 @@ export default {
   display: flex;
   justify-content: center;
   margin-top: 10rpx;
-  //padding: 10rpx;
 
   .title-input {
     border: 1rpx solid #fbfbfb;
@@ -454,10 +507,20 @@ export default {
 .cover-box {
   display: flex;
   justify-content: center;
+  align-items: center;
   margin-top: 20rpx;
   .cover-img {
     width: 90%;
-    height: 202px;
+    border-radius: 5rpx;
+  }
+
+  .cover-icon {
+    width: 50rpx;
+    height: 50rpx;
+    position: absolute;
+    // top: 12%;
+    // left: 50%;
+    transform: translate(-50%, -50%);
   }
 }
 .box-margin {
