@@ -61,8 +61,8 @@ export default {
     };
   },
   onLoad() {
-    let { token } = uni.getStorageSync("userInfo");
-    if (!token) {
+    let { user } = uni.getStorageSync("userInfo");
+    if (user == undefined || user == null) {
       uni.navigateTo({
         url: `/pages/login/login`,
       });

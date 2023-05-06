@@ -10,17 +10,23 @@
         </view>
       </view>
       <view class="act-box-item-2">
-        <view class="act-time">进行中:{{ item.start }}~{{ item.end }}</view>
+        <view class="act-time">进行中:{{ item.startTime }}~{{ item.endTime }}</view>
         <view class="act-content">{{ item.content }}</view>
       </view>
     </view>
     <view class="act-boot">
-      <image class="act-add" @click="addActive" src="../../static/icons/Plus.png"/>
+      <image
+        class="act-add"
+        @click="addActive"
+        src="../../static/icons/Plus.png"
+      />
     </view>
   </view>
 </template>
 
 <script>
+import { getActivities } from "@/api/api.js";
+
 export default {
   data() {
     return {
@@ -52,14 +58,24 @@ export default {
             { id: 2, avatar: "../../static/images/2.jpg" },
             { id: 3, avatar: "../../static/images/3.jpg" },
           ],
-        }
+        },
       ],
     };
+  },
+  onLoad(e) {
+    let that = this
+    getActivities().then(res => {
+
+      if(res.statusCode == 200){ 
+        
+        that.activities = res.data.items
+      }
+    })
   },
   methods: {
     //添加图片
     addImage() {},
-    addActive(){
+    addActive() {
       uni.navigateTo({
         url: `/pages/activity/create`,
       });
@@ -76,7 +92,7 @@ export default {
   border-radius: 15rpx;
   margin: 15rpx;
   .act-box-item-1 {
-    margin:15rpx;
+    margin: 15rpx;
     .act-cover {
       width: 150rpx;
       height: 150rpx;
@@ -115,13 +131,13 @@ export default {
 }
 .act-boot {
   margin-bottom: 10rpx;
-    display: flex;
-    justify-content: center;
-  .act-add{
+  display: flex;
+  justify-content: center;
+  .act-add {
     width: 100rpx;
     height: 100rpx;
     position: absolute;
-    bottom: 50rpx;  
+    bottom: 50rpx;
   }
 }
 </style>

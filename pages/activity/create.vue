@@ -98,7 +98,7 @@
             @click="deleteItem(item)"
           ></text>
         </view>
-        <view class="cover-box" v-if="item.type == 'image'">
+        <view class="cover-box" v-if="item.type == 1">
           <image class="cover-img" :src="item.value" />
           <image
             class="cover-icon"
@@ -139,6 +139,7 @@
             color: rgba(255, 255, 255, 1);
             font-size: 26rpx;
           "
+          @click="create"
         >
           保存
         </button>
@@ -167,7 +168,7 @@
 import MxDatePicker from "@/components/mx-datepicker/mx-datepicker.vue";
 import editPopup from "@/components/edit-popup/edit-popup.vue";
 import { mapKey } from "@/api/base.js";
-import { uploadURL, downloadURL } from "@/api/api.js";
+import { uploadURL, downloadURL, createActivity } from "@/api/api.js";
 
 export default {
   components: {
@@ -188,22 +189,22 @@ export default {
       location: "青龙湖湿地公园",
       list: [
         {
-          id: 1,
+          id: 0,
           sort: 1,
-          type: "image",
+          type: 1,
           value: "../../static/images/4.png",
         },
         {
-          id: 2,
+          id: 0,
           sort: 2,
-          type: "text",
+          type: 0,
           value:
             "徒步旅行、漂流和草坪游戏都是适合成年人的绝佳团体露营创意，但新颖的原创活动创意可以让您的露营之旅更上一层楼。每次您的团体一起露营时尝试新活动，或者为仅限成人的年度露营旅行",
         },
         {
-          id: 3,
+          id: 0,
           sort: 3,
-          type: "image",
+          type: 1,
           value: "../../static/images/5.jpg",
         },
       ],
@@ -225,7 +226,7 @@ export default {
       let that = this;
       that.list.forEach((element) => {
         if ((element.sort = data.sort)) {
-          debugger;
+          
           element.value = data;
         }
       });
@@ -297,12 +298,12 @@ export default {
     onAddContent(data) {
       let that = this;
       let list2 = [];
-      debugger;
+      
       if (that.list.length === 0) {
         that.list.push({
           id: 0,
           sort: data.sort,
-          type: "text",
+          type: 0,
           value: data.value,
         });
         return;
@@ -317,7 +318,7 @@ export default {
       list2.push({
         id: 0,
         sort: data.sort,
-        type: "text",
+        type: 0,
         value: data.value,
       });
       list2.sort(function (a, b) {
@@ -327,7 +328,7 @@ export default {
       that.list = list2;
     },
     onContentChange(data) {
-      debugger;
+      
       let that = this;
       that.content = data;
     },
@@ -413,11 +414,11 @@ export default {
             var data2 = JSON.parse(res.data);
             if (type == 0) {
               //add image
-              debugger;
+              
               that.list.push({
                 id: 0,
                 sort: data !== null ? data.sort : 0,
-                type: "image",
+                type: 1,
                 value: data2.data.url,
               });
             } else if (type == 1) {
@@ -447,20 +448,44 @@ export default {
         complete: function (e) {},
       });
     },
-    save() {
-      let that = this
+    create() {
+      uni.showLoading({
+        title: "保存中",
+      });
+
+      let that = this;
+      let { user } = uni.getStorageSync("userInfo");
       let model = {
-          Title : that.title,
-          Cover : that.cover,
-          Content: that.content,
-          Start: that.rangetime[0],
-          End:that.rangetime[1],
-          Location: that.location,
-          Appendixs:list
-      }
+        Subject: that.title,
+        CoverUrl: that.cover,
+        Content: that.content,
+        StartTime: that.rangetime[0].replaceAll("/", "-") + ":00",
+        EndTime: that.rangetime[1].replaceAll("/", "-") + ":00",
+        Address: that.location,
+        ActivityUsers: [],
+        ActivityAppendices: that.list,
+        Creator: user.id,
+      };
+      console.log(model);
 
-      
+      createActivity(model).then((res) => {
+        console.log(res);
+        uni.hideLoading();
 
+        if (res.statusCode == 200) {
+          uni.navigateTo({
+            url: `/pages/activity/activity`,
+          });
+        } else {
+          uni.showToast({
+                title: res.message,
+                mask: true,
+                icon: "none",
+                duration: 2000,
+              });
+              return;
+        }
+      });
     },
   },
 };

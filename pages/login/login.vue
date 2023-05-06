@@ -20,15 +20,38 @@
         </label>
       </radio-group>
     </view>
-    <button class="login_btn" v-if="isUpdate" :class="{ green: true }" @click="register">更新</button>
-    <button class="login_btn" v-else :class="{ green: true }" @click="register">注册</button>
-    <view class="cancle" :class="{ green: true }" @click="cancle">取消</view
+    <button
+      class="login_btn"
+      open-type="getPhoneNumber"
+      @getphonenumber="getPhoneNumber"
+      v-if="phone == null"
     >
+      授权手机
+    </button>
+    <button
+      class="login_btn"
+      v-if="isUpdate"
+      :class="{ green: true }"
+      @click="register"
+    >
+      更新
+    </button>
+    <button class="login_btn" v-else :class="{ green: true }" @click="register">
+      注册
+    </button>
+
+    <view class="cancle" :class="{ green: true }" @click="cancle">取消</view>
   </view>
 </template>
 
 <script>
-import { register, login, uploadURL, downloadURL } from "@/api/api.js";
+import {
+  register,
+  login,
+  getUserPhone,
+  uploadURL,
+  downloadURL,
+} from "@/api/api.js";
 export default {
   data() {
     return {
@@ -36,31 +59,28 @@ export default {
       isLogin: false,
       userInfo: {},
       authInfo: {},
-      nickName: '',
+      nickName: "",
+      phone: null,
       gender: 0,
       avatarUrl:
         "https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0",
     };
   },
-  computed: {
-
-  },
+  computed: {},
   onLoad(e) {
-    this.userInfo = uni.getStorageSync('userInfo') || {}
-    this.authInfo = uni.getStorageSync('authInfo')
-    if(!this.userInfo.token)
-      this.login()
-      let { user } = this.userInfo
-    if(user) {
-      this.avatarUrl = user.avatar
-      this.nickName = user.nickName
-      this.gender = user.gender
-      this.isUpdate = true
+   
+    this.userInfo = uni.getStorageSync("userInfo") || {};
+    this.authInfo = uni.getStorageSync("authInfo");
+    if (!this.userInfo.user) this.login();
+    let { user } = this.userInfo;
+    if (user) {
+      this.avatarUrl = user.avatar;
+      this.nickName = user.nickName;
+      this.gender = user.gender;
+      this.isUpdate = true;
     }
   },
-  onUnload() {
-
-  },
+  onUnload() {},
   methods: {
     getToken(e, msg) {
       var that = this;
@@ -71,37 +91,38 @@ export default {
         provider: "weixin",
         success: function (loginRes) {
           login({
-            code: loginRes.code
+            code: loginRes.code,
           })
             .then((res) => {
+             
               if (res.data.statusCode == 0) {
-                  that.$set(that.userInfo, "user", res.data.data.userInfo);
-                  that.$set(that.userInfo, "token", res.data.data.token);
-                  uni.setStorageSync("userInfo", that.userInfo);
-                  if (res.data.data.isRegister) {
-                    that.isLogin = true;
-                    uni.hideLoading();
-                    if (msg) {
-                      uni.showToast({
-                        title: msg,
-                        icon: "none",
-                        duration: 1500,
-                      });
-                    } else {                 
-                      uni.showToast({
-                        title: "登录成功",
-                        icon: "success",
-                        duration: 1500,
-                      });
-                      uni.navigateTo({
-                        url:`/pages/index/index`
-                      })
-                    }
-                  }else{
-                    uni.hideLoading();
+                that.$set(that.userInfo, "user", res.data.data.userInfo);
+                that.$set(that.userInfo, "token", res.data.data.token);
+                uni.setStorageSync("userInfo", that.userInfo);
+                if (res.data.data.isRegister) {
+                  that.isLogin = true;
+                  uni.hideLoading();
+                  if (msg) {
+                    uni.showToast({
+                      title: msg,
+                      icon: "none",
+                      duration: 1500,
+                    });
+                  } else {
+                    uni.showToast({
+                      title: "登录成功",
+                      icon: "success",
+                      duration: 1500,
+                    });
+                    uni.navigateTo({
+                      url: `/pages/index/index`,
+                    });
                   }
-              }else {
-                  uni.showToast({
+                } else {
+                  uni.hideLoading();
+                }
+              } else {
+                uni.showToast({
                   title: res.data.message,
                   icon: "none",
                   duration: 3000,
@@ -129,25 +150,28 @@ export default {
       });
     },
     async register() {
+     
       var that = this;
       let registerWxUserInfo = {
-         Avatar : that.avatarUrl,
-         NickName : that.nickName,
-         Gender : that.gender
-      };    
+        Avatar: that.avatarUrl,
+        NickName: that.nickName,
+        Gender: that.gender,
+        Phone: that.phone,
+      };
       register(registerWxUserInfo).then((res) => {
         uni.hideLoading();
         if (res.data.statusCode == 0) {
-            uni.showToast({
+          uni.showToast({
             title: res.data.message,
             icon: "none",
             duration: 1500,
           });
+          
           that.$set(that.userInfo, "user", res.data.data.userInfo);
           uni.setStorageSync("userInfo", that.userInfo);
           uni.navigateTo({
-            url: `/pages/index/index`
-          })
+            url: `/pages/index/index`,
+          });
         }
       });
     },
@@ -159,7 +183,7 @@ export default {
     },
     getuserProfile(e) {
       wx.getUserProfile({
-        desc: "用于完善会员资料", 
+        desc: "用于完善会员资料",
         success: async (res) => {
           if ((res.errMsg = "getUserProfile:ok")) {
             this.authInfo = {};
@@ -196,8 +220,15 @@ export default {
       }
     },
     getPhoneNumber(e) {
+      
+      let that = this;
       if (e.detail.errMsg == "getPhoneNumber:ok") {
-        this.getToken(e);
+        console.log(e.detail.code);
+        getUserPhone({code: e.detail.code}).then((res) => {
+          if(res.data.statusCode == 0) {
+             that.phone = res.data.data.phone;
+          }
+        });
       } else {
         uni.showToast({
           icon: "none",
@@ -220,7 +251,7 @@ export default {
         },
       });
     },
-    changeGender(e){
+    changeGender(e) {
       this.gender = e.detail.value;
     },
     upload(imgPaths) {
@@ -235,27 +266,26 @@ export default {
         filePath: imgPaths[0],
         name: "file", //示例，使用顺序给文件命名
         success: function (res) {
-          debugger
-           if(res.statusCode == 200) {
-              var data = JSON.parse(res.data);
-              that.avatarUrl = data.data.url;
+         
+          if (res.statusCode == 200) {
+            var data = JSON.parse(res.data);
+            that.avatarUrl = data.data.url;
+          } else {
+            if (res.message) {
+              uni.showToast({
+                title: res.message,
+                mask: true,
+                icon: "none",
+                duration: 2000,
+              });
+              return;
             }
-            else {
-              if (res.message) {
-                uni.showToast({
-                  title: res.message,
-                  mask: true,
-                  icon: "none",
-                  duration: 2000,
-                });
-                return;
-              }
           }
         },
         fail: function (e) {},
         complete: function (e) {},
       });
-    }
+    },
   },
 };
 </script>
