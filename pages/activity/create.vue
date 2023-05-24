@@ -2,16 +2,18 @@
   <view>
     <scroll-view :scroll-top="scrollTop" scroll-y="true" class="scroll-Y">
       <view class="title-box box-margin">
-        <label for="">{{ title }}</label
+        <label for="">{{ model.subject }}</label
         ><text
+          v-if="!isView"
           class="iconfont icon-pen"
           style="padding-left: 10rpx; font-size: 12px; padding-top: 6px"
           @click="inputDialogToggle"
         ></text>
       </view>
       <view class="cover-box">
-        <image class="cover-img" :src="cover" />
+        <image class="cover-img" :src="model.coverUrl" />
         <image
+          v-if="!isView"
           class="cover-icon"
           src="../../static/icons/Img_box_fill.png"
           @click="changeCover"
@@ -20,11 +22,14 @@
       <view class="time-box box-margin">
         <label>活动时间：</label>
         <text
+          v-if="!isView"
           class="iconfont icon-calendar"
           @click="onShowDatePicker('rangetime')"
           style="padding-right: 10rpx"
         ></text>
-        <label class="font-size">{{ rangetime[0] }} ~ {{ rangetime[1] }}</label>
+        <label class="font-size"
+          >{{ model.startTime }} ~ {{ model.endTime }}</label
+        >
         <view>
           <mx-date-picker
             :show="showPicker"
@@ -46,27 +51,54 @@
           @click="onChooseLocation"
           style="padding-right: 10rpx"
         ></text>
-        <label class="font-size">{{ location }}</label>
+        <label class="font-size">{{ model.address }}</label>
+      </view>
+      <view class="location-box box-margin">
+        <view
+          class="uni-flex uni-row"
+          v-for="item in model.activityUsers"
+          :key="item.id"
+        >
+          <view class="flex-item"><label>活动对象：</label></view>
+          <view class="flex-item">
+            <button
+              open-type="share"
+              style="
+                width: 30px;
+                height: 30px;
+                line-height: 30px;
+                padding: inherit;
+                background-color: transparent;
+                border: none;
+              "
+            >
+              <text class="iconfont icon-share1" style="font-size: 16px"></text>
+            </button>
+          </view>
+          <view class="flex-item">
+            <image class="news-item-avatar" :src="item.user.avatar" />
+          </view>
+        </view>
       </view>
       <view class="content-box box-margin">
         <label>活动内容：</label>
-        <text
+        <text class="font-size"
           style="
             padding-top: 10rpx;
-            font-size: 14px;
             padding-right: 20rpx;
             line-height: 200%;
           "
-          @click="editContent"
         >
-          {{ content }}
+          {{ model.content }}
           <text
+            v-if="!isView"
             class="iconfont icon-pen"
             style="padding-left: 5rpx; font-size: 12px; padding-top: 6px"
+            @click="editContent"
           ></text
         ></text>
       </view>
-      <view class="add-box box-margin" v-if="listLength == 0">
+      <view class="add-box box-margin" v-if="listLength == 0 && !isView">
         <text class="iconfont icon-add" style="font-size: 26px"></text>
         <text
           class="iconfont icon-text"
@@ -79,8 +111,8 @@
           @click="chooseImage(null)"
         ></text>
       </view>
-      <view v-else v-for="item in list" :key="item.id">
-        <view class="add-box box-margin">
+      <view v-else v-for="item in model.activityAppendices" :key="item.id">
+        <view v-if="!isView" class="add-box box-margin">
           <text class="iconfont icon-add" style="font-size: 26px"></text>
           <text
             class="iconfont icon-text"
@@ -101,6 +133,7 @@
         <view class="cover-box" v-if="item.type == 1">
           <image class="cover-img" :src="item.value" />
           <image
+            v-if="!isView"
             class="cover-icon"
             src="../../static/icons/Img_box_fill.png"
             @click="changeImage(item)"
@@ -108,18 +141,19 @@
         </view>
         <view class="content-box box-margin" v-else>
           <text
+          class="font-size"
             style="
               padding-top: 10rpx;
-              font-size: 14px;
               padding-right: 20rpx;
               line-height: 200%;
             "
-            @click="editContent"
           >
             {{ item.value }}
             <text
+              v-if="!isView"
               class="iconfont icon-pen"
               style="padding-left: 5rpx; font-size: 12px; padding-top: 6px"
+              @click="editContent"
             ></text
           ></text>
         </view>
@@ -127,6 +161,7 @@
 
       <view class="page-boot" style="">
         <button
+          v-if="!isView"
           type="default"
           style="
             position: fixed;
@@ -143,6 +178,75 @@
         >
           保存
         </button>
+        <button
+          v-else-if="!isProgress && !model.isAttend"
+          type="default"
+          style="
+            position: fixed;
+            bottom: 25rpx;
+            left: 38%;
+            right: 38%;
+            background-color: transparent;
+            border: 5rpx solid greenyellow;
+            border-radius: 15rpx;
+            color: rgba(255, 255, 255, 1);
+            font-size: 26rpx;
+          "
+          @click="addUser"
+        >
+          报名
+        </button>
+        <button
+          v-else-if="isProgress"
+          type="default"
+          style="
+            position: fixed;
+            bottom: 25rpx;
+            left: 38%;
+            right: 38%;
+            background-color: transparent;
+            border: 5rpx solid greenyellow;
+            border-radius: 15rpx;
+            color: rgba(255, 255, 255, 1);
+            font-size: 26rpx;
+          "
+          @click="signature"
+        >
+          签到
+        </button>
+        <button
+          v-if="!isProgress && model.isAttend"
+          type="default"
+          style="
+            position: fixed;
+            bottom: 25rpx;
+            left: 38%;
+            right: 38%;
+            background-color: transparent;
+            border: 5rpx solid gray;
+            border-radius: 15rpx;
+            color: rgba(255, 255, 255, 1);
+            font-size: 26rpx;
+          "
+        >
+          已报名<text
+            class="iconfont icon-success"
+            style="padding-left: 10rpx; font-size: 16px"
+          ></text>
+        </button>
+        <view type="default" style="position: fixed; bottom: 15px; right: 25%">
+          <button
+            open-type="share"
+            style="
+              background-color: transparent;
+            "
+          >
+            <text
+              class="iconfont icon-share1"
+              style="display: flex; font-size: 16px"
+            ></text>
+          </button>
+        </view>
       </view>
     </scroll-view>
     <uni-popup ref="inputDialog" type="dialog">
@@ -168,7 +272,13 @@
 import MxDatePicker from "@/components/mx-datepicker/mx-datepicker.vue";
 import editPopup from "@/components/edit-popup/edit-popup.vue";
 import { mapKey } from "@/api/base.js";
-import { uploadURL, downloadURL, createActivity } from "@/api/api.js";
+import {
+  uploadURL,
+  downloadURL,
+  createActivity,
+  getActivity,
+  addUser,
+} from "@/api/api.js";
 
 export default {
   components: {
@@ -177,56 +287,91 @@ export default {
   },
   data() {
     return {
+      isView: false,
       isEdit: false,
-      title: "活动标题",
-      cover: "../../static/images/4.png",
-      content:
-        "徒步旅行、漂流和草坪游戏都是适合成年人的绝佳团体露营创意，但新颖的原创活动创意可以让您的露营之旅更上一层楼。每次您的团体一起露营时尝试新活动，或者为仅限成人的年度露营旅行",
+      isProgress: false,
+
+      userId: 0,
       showPicker: false,
-      rangetime: ["2023/03/01 14:00", "2023/03/06 13:59"],
       type: "rangetime",
+      rangetime: ["2023/03/01 14:00", "2023/03/06 13:59"],
       value: "",
-      location: "青龙湖湿地公园",
-      list: [
-        {
-          id: 0,
-          sort: 1,
-          type: 1,
-          value: "../../static/images/4.png",
-        },
-        {
-          id: 0,
-          sort: 2,
-          type: 0,
-          value:
-            "徒步旅行、漂流和草坪游戏都是适合成年人的绝佳团体露营创意，但新颖的原创活动创意可以让您的露营之旅更上一层楼。每次您的团体一起露营时尝试新活动，或者为仅限成人的年度露营旅行",
-        },
-        {
-          id: 0,
-          sort: 3,
-          type: 1,
-          value: "../../static/images/5.jpg",
-        },
-      ],
+      model: {
+        isAttend: false,
+        subject: "活动标题",
+        coverUrl: "../../static/images/4.png",
+        content:
+          "徒步旅行、漂流和草坪游戏都是适合成年人的绝佳团体露营创意，但新颖的原创活动创意可以让您的露营之旅更上一层楼。每次您的团体一起露营时尝试新活动，或者为仅限成人的年度露营旅行",
+        address: "青龙湖湿地公园",
+        activityAppendices: [
+          {
+            id: 0,
+            sort: 1,
+            type: 1,
+            value: "../../static/images/4.png",
+          },
+          {
+            id: 0,
+            sort: 2,
+            type: 0,
+            value:
+              "徒步旅行、漂流和草坪游戏都是适合成年人的绝佳团体露营创意，但新颖的原创活动创意可以让您的露营之旅更上一层楼。每次您的团体一起露营时尝试新活动，或者为仅限成人的年度露营旅行",
+          },
+          {
+            id: 0,
+            sort: 3,
+            type: 1,
+            value: "../../static/images/5.jpg",
+          },
+        ],
+        activityUsers: [],
+      },
     };
   },
   onLoad(e) {
-    this.getLocation();
+    let that = this;
+    let { user } = uni.getStorageSync("userInfo");
+    that.userId = user.id;
+
+    if (e.id !== undefined && e.id > 0) {
+      that.isView = true;
+      getActivity(e.id).then((res) => {
+        if (res.statusCode == 200) {
+          that.model = res.data;
+        }
+      });
+    } else {
+      that.getLocation();
+    }
+
     uni.$on("setData", (res) => {
       console.log(res.content);
     });
   },
+  onShareAppMessage(res) {
+    if (res.from === "button") {
+      //this.$refs.sharebox.close();
+    }
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ["shareAppMessage", "shareTimeline"],
+    });
+    return {
+      title: this.model.subject,
+      path: `pages/activity/create?id=${this.model.id}`,
+      imageUrl: this.model.coverUrl,
+    };
+  },
   computed: {
     listLength() {
-      return this.list.length;
+      return this.model.activityAppendices.length;
     },
   },
   methods: {
     addImageCallBack(data) {
       let that = this;
-      that.list.forEach((element) => {
+      that.model.activityAppendices.forEach((element) => {
         if ((element.sort = data.sort)) {
-          
           element.value = data;
         }
       });
@@ -271,7 +416,7 @@ export default {
       setTimeout(() => {
         uni.hideLoading();
         console.log(val);
-        that.title = val;
+        that.model.subject = val;
         // 关闭窗口后，恢复默认内容
         this.$refs.inputDialog.close();
       }, 3000);
@@ -288,19 +433,19 @@ export default {
     deleteItem(data) {
       let that = this;
       var list2 = [];
-      that.list.forEach((element) => {
+      that.model.activityAppendices.forEach((element) => {
         if (element.sort != data.sort) {
           list2.push(element);
         }
       });
-      that.list = list2;
+      that.model.activityAppendices = list2;
     },
     onAddContent(data) {
       let that = this;
       let list2 = [];
-      
-      if (that.list.length === 0) {
-        that.list.push({
+
+      if (that.model.activityAppendices.length === 0) {
+        that.model.activityAppendices.push({
           id: 0,
           sort: data.sort,
           type: 0,
@@ -309,7 +454,7 @@ export default {
         return;
       }
 
-      that.list.forEach((element) => {
+      that.model.activityAppendices.forEach((element) => {
         if (element.sort >= data.sort) {
           element.sort += 1;
         }
@@ -325,12 +470,11 @@ export default {
         return a.sort - b.sort;
       });
 
-      that.list = list2;
+      that.model.activityAppendices = list2;
     },
     onContentChange(data) {
-      
       let that = this;
-      that.content = data;
+      that.model.content = data;
     },
     onShowDatePicker(type) {
       //显示
@@ -360,7 +504,7 @@ export default {
           var address = res.address;
           var latitude = res.latitude;
           var longitude = res.longitude;
-          that.location = res.address;
+          that.model.address = res.address;
           console.log(
             "name: " +
               name +
@@ -392,7 +536,7 @@ export default {
               longitude: longitude,
             },
             success: function (res) {
-              that.location = res.result;
+              that.model.address = res.result;
               console.log(res.result);
             },
           });
@@ -414,8 +558,7 @@ export default {
             var data2 = JSON.parse(res.data);
             if (type == 0) {
               //add image
-              
-              that.list.push({
+              that.model.activityAppendices.push({
                 id: 0,
                 sort: data !== null ? data.sort : 0,
                 type: 1,
@@ -423,14 +566,14 @@ export default {
               });
             } else if (type == 1) {
               //change image
-              that.list.forEach((element) => {
+              that.model.activityAppendices.forEach((element) => {
                 if (element.sort == data.sort) {
                   element.value = data2.data.url;
                 }
               });
             } else {
               //change master cover
-              that.cover = data2.data.url;
+              that.model.coverUrl = data2.data.url;
             }
           } else {
             if (res.message) {
@@ -456,14 +599,14 @@ export default {
       let that = this;
       let { user } = uni.getStorageSync("userInfo");
       let model = {
-        Subject: that.title,
-        CoverUrl: that.cover,
-        Content: that.content,
+        Subject: that.model.subject,
+        CoverUrl: that.model.coverUrl,
+        Content: that.model.content,
         StartTime: that.rangetime[0].replaceAll("/", "-") + ":00",
         EndTime: that.rangetime[1].replaceAll("/", "-") + ":00",
-        Address: that.location,
+        Address: that.model.address,
         ActivityUsers: [],
-        ActivityAppendices: that.list,
+        ActivityAppendices: that.model.activityAppendices,
         Creator: user.id,
       };
       console.log(model);
@@ -478,12 +621,42 @@ export default {
           });
         } else {
           uni.showToast({
-                title: res.message,
-                mask: true,
-                icon: "none",
-                duration: 2000,
-              });
-              return;
+            title: res.message,
+            mask: true,
+            icon: "none",
+            duration: 2000,
+          });
+          return;
+        }
+      });
+    },
+    addUser() {
+      uni.showLoading({
+        title: "报名中...",
+      });
+      let { user } = uni.getStorageSync("userInfo");
+
+      let param = {
+        WxUserId: user.id,
+        ActivityId: this.model.id,
+      };
+
+      addUser(param).then((res) => {
+        if (res.statusCode == 200) {
+          uni.showToast({
+            title: "报名成功",
+            mask: true,
+            icon: "none",
+            duration: 2000,
+          });
+        } else {
+          uni.showToast({
+            title: res.message,
+            mask: true,
+            icon: "none",
+            duration: 2000,
+          });
+          return;
         }
       });
     },
@@ -492,6 +665,18 @@ export default {
 </script>
 
 <style lang="scss">
+.news-item-avatar {
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.flex-item {
+  text-align: center;
+  margin-top: 5px;
+  margin-left: 0px;
+}
 .title-box {
   display: flex;
   justify-content: center;
@@ -526,7 +711,7 @@ export default {
 }
 
 .font-size {
-  font-size: 25rpx;
+  font-size: 22rpx;
 }
 
 .cover-box {

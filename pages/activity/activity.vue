@@ -2,7 +2,11 @@
   <view>
     <view class="act-box" v-for="(item, index) in activities" :key="index">
       <view class="act-box-item-1">
-        <image class="act-cover" :src="item.coverUrl" @click="addImage"></image>
+        <image
+          class="act-cover"
+          :src="item.coverUrl"
+          @click="viewActivity(item)"
+        ></image>
         <view class="avatar-group">
           <view v-for="(user, index2) in item.users" :key="index2">
             <image class="avatar-item" :src="user.avatar"></image>
@@ -10,16 +14,31 @@
         </view>
       </view>
       <view class="act-box-item-2">
-        <view class="act-time">进行中:{{ item.startTime }}~{{ item.endTime }}</view>
+        <view class="act-time">{{ item.startTime }}~{{ item.endTime }}</view>
         <view class="act-content">{{ item.content }}</view>
       </view>
     </view>
     <view class="act-boot">
-      <image
-        class="act-add"
+      <button
+        type="default"
+        style="
+          position: fixed;
+          bottom: 30rpx;
+          left: 38%;
+          right: 38%;
+          background-color: transparent;
+          border: 5rpx solid gray;
+          border-radius: 15rpx;
+          color: rgba(255, 255, 255, 1);
+          font-size: 26rpx;
+        "
         @click="addActive"
-        src="../../static/icons/Plus.png"
-      />
+      >
+        创建<text
+          class="iconfont icon-add"
+          style="padding-left: 10rpx; font-size: 26rpx"
+        ></text>
+      </button>
     </view>
   </view>
 </template>
@@ -33,7 +52,7 @@ export default {
       activities: [
         {
           coverUrl: "../../static/images/4.png",
-          title: "徒步活动",
+          subject: "徒步活动",
           content:
             "徒步旅行、漂流和草坪游戏都是适合成年人的绝佳团体露营创意，但新颖的原创活动创意可以让您的露营之旅更上一层楼。每次您的团体一起露营时尝试新活动，或者为仅限成人的年度露营旅行",
           start: "2022-12-25",
@@ -63,18 +82,20 @@ export default {
     };
   },
   onLoad(e) {
-    let that = this
-    getActivities().then(res => {
-
-      if(res.statusCode == 200){ 
-        
-        that.activities = res.data.items
+    let that = this;
+    getActivities().then((res) => {
+      if (res.statusCode == 200) {
+        that.activities = res.data.items;
       }
-    })
+    });
   },
   methods: {
     //添加图片
-    addImage() {},
+    viewActivity(item) {
+      uni.navigateTo({
+        url: `/pages/activity/create?id=${item.id}`,
+      });
+    },
     addActive() {
       uni.navigateTo({
         url: `/pages/activity/create`,
@@ -112,7 +133,7 @@ export default {
   .act-box-item-2 {
     flex-grow: 1;
     .act-time {
-      font-size: 25rpx;
+      font-size: 20rpx;
       color: #fff;
       background-color: #3e276d;
       border-radius: 5rpx;
@@ -123,7 +144,7 @@ export default {
     .act-content {
       width: 98%;
       color: #fff;
-      font-size: 24rpx;
+      font-size: 20rpx;
       margin-left: 5rpx;
       padding-right: 5rpx;
     }

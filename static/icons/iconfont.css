@@ -27,6 +27,7 @@
 }
 
 .icon-add:before {
+  color: greenyellow;
   content: "\e613";
 }
 
@@ -66,7 +67,13 @@
 }
 
 .icon-share:before {
+  color: greenyellow;
   content: "\e760";
+}
+
+.icon-share1:before {
+  color: greenyellow;
+  content: "\e67f";
 }
 
 .icon-trash:before {
@@ -76,3 +83,10 @@
 .icon-text:before {
   content: "\e60b";
 }
+
+.icon-success:before{
+  color: greenyellow;
+  content: "\e681";
+}
+
+
