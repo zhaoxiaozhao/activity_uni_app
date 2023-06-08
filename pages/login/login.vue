@@ -6,17 +6,21 @@
       @click="chooseImage()"
       mode="aspectFill"
     ></image>
+    <view v-if="isExpired">
+      {{ nickName }}
+    </view>
     <input
+      v-else
       type="text"
       class="nick-input"
       v-model="nickName"
       placeholder="请输入昵称"
     />
-    <view class="gender-box">
+    <view class="gender-box" v-if="!isExpired">
       <radio-group @change="changeGender">
-        <label> <radio value="1" /><text>男</text> </label>
+        <label> <radio value="1" :checked="gender === 1" /><text>男</text> </label>
         <label>
-          <radio class="gender-famale" value="0" /><text>女</text>
+          <radio class="gender-famale" value="0" :checked="gender === 0" /><text>女</text>
         </label>
       </radio-group>
     </view>
@@ -24,20 +28,29 @@
       class="login_btn"
       open-type="getPhoneNumber"
       @getphonenumber="getPhoneNumber"
-      v-if="phone == null"
+      v-if="phone == null && !isExpired"
     >
       授权手机
     </button>
     <button
       class="login_btn"
-      v-if="isUpdate"
+      v-if="isUpdate && !isExpired"
       :class="{ green: true }"
       @click="register"
     >
       更新
     </button>
-    <button class="login_btn" v-else :class="{ green: true }" @click="register">
+    <button class="login_btn" v-else-if="!isUpdate && !isExpired" :class="{ green: true }" @click="register">
       注册
+    </button>
+
+    <button
+      class="login_btn"
+      v-if="isExpired"
+      :class="{ green: true }"
+      @click="login"
+    >
+      登录
     </button>
 
     <view class="cancle" :class="{ green: true }" @click="cancle">取消</view>
@@ -57,6 +70,7 @@ export default {
     return {
       isUpdate: false,
       isLogin: false,
+      isExpired: false,
       userInfo: {},
       authInfo: {},
       nickName: "",
@@ -68,7 +82,8 @@ export default {
   },
   computed: {},
   onLoad(e) {
-   
+    this.isLogin = getApp().globalData.isLogin;
+    this.isExpired = getApp().globalData.isExpired;
     this.userInfo = uni.getStorageSync("userInfo") || {};
     this.authInfo = uni.getStorageSync("authInfo");
     if (!this.userInfo.user) this.login();
@@ -94,11 +109,11 @@ export default {
             code: loginRes.code,
           })
             .then((res) => {
-             
               if (res.data.statusCode == 0) {
                 that.$set(that.userInfo, "user", res.data.data.userInfo);
                 that.$set(that.userInfo, "token", res.data.data.token);
                 uni.setStorageSync("userInfo", that.userInfo);
+                uni.setStorageSync("accessToken", res.data.data.accessToken);
                 if (res.data.data.isRegister) {
                   that.isLogin = true;
                   uni.hideLoading();
@@ -150,7 +165,6 @@ export default {
       });
     },
     async register() {
-     
       var that = this;
       let registerWxUserInfo = {
         Avatar: that.avatarUrl,
@@ -166,7 +180,7 @@ export default {
             icon: "none",
             duration: 1500,
           });
-          
+
           that.$set(that.userInfo, "user", res.data.data.userInfo);
           uni.setStorageSync("userInfo", that.userInfo);
           uni.navigateTo({
@@ -220,13 +234,12 @@ export default {
       }
     },
     getPhoneNumber(e) {
-      
       let that = this;
       if (e.detail.errMsg == "getPhoneNumber:ok") {
         console.log(e.detail.code);
-        getUserPhone({code: e.detail.code}).then((res) => {
-          if(res.data.statusCode == 0) {
-             that.phone = res.data.data.phone;
+        getUserPhone({ code: e.detail.code }).then((res) => {
+          if (res.data.statusCode == 0) {
+            that.phone = res.data.data.phone;
           }
         });
       } else {
@@ -266,7 +279,6 @@ export default {
         filePath: imgPaths[0],
         name: "file", //示例，使用顺序给文件命名
         success: function (res) {
-         
           if (res.statusCode == 200) {
             var data = JSON.parse(res.data);
             that.avatarUrl = data.data.url;
