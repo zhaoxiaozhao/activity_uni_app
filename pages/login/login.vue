@@ -18,9 +18,13 @@
     />
     <view class="gender-box" v-if="!isExpired">
       <radio-group @change="changeGender">
-        <label> <radio value="1" :checked="gender === 1" /><text>男</text> </label>
         <label>
-          <radio class="gender-famale" value="0" :checked="gender === 0" /><text>女</text>
+          <radio value="1" :checked="gender === 1" /><text>男</text>
+        </label>
+        <label>
+          <radio class="gender-famale" value="0" :checked="gender === 0" /><text
+            >女</text
+          >
         </label>
       </radio-group>
     </view>
@@ -40,7 +44,12 @@
     >
       更新
     </button>
-    <button class="login_btn" v-else-if="!isUpdate && !isExpired" :class="{ green: true }" @click="register">
+    <button
+      class="login_btn"
+      v-else-if="!isUpdate && !isExpired"
+      :class="{ green: true }"
+      @click="register"
+    >
       注册
     </button>
 
@@ -135,6 +144,11 @@ export default {
                   }
                 } else {
                   uni.hideLoading();
+                  uni.showToast({
+                    title: "登录失败，未注册",
+                    icon: "none",
+                    duration: 3000,
+                  });
                 }
               } else {
                 uni.showToast({
@@ -166,9 +180,20 @@ export default {
     },
     async register() {
       var that = this;
+      //验证手机号是否授权
+      if (that.phone === null) {
+        uni.showToast({
+          title: "请授权手机号",
+          icon: "none",
+          duration: 3000,
+        });
+      }
+
+      debugger
+
       let registerWxUserInfo = {
         Avatar: that.avatarUrl,
-        NickName: that.nickName,
+        NickName: that.nickName === "" ? "undefined" : that.nickName,
         Gender: that.gender,
         Phone: that.phone,
       };
@@ -180,11 +205,13 @@ export default {
             icon: "none",
             duration: 1500,
           });
-
-          that.$set(that.userInfo, "user", res.data.data.userInfo);
-          uni.setStorageSync("userInfo", that.userInfo);
-          uni.navigateTo({
-            url: `/pages/index/index`,
+          that.login();
+        } else {
+          uni.hideLoading();
+          uni.showToast({
+            title: "注册失败",
+            icon: "none",
+            duration: 3000,
           });
         }
       });
