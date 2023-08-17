@@ -89,4 +89,9 @@
   content: "\e681";
 }
 
+.icon-game::before{
+  color: aqua;
+  content: "\e618";
+}
+
 

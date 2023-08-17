@@ -1,199 +1,219 @@
 <template>
-  <view class="content">
-    <!-- <button @click="gotoRegister">更新</button>
-    <button @click="gotoActivity">添加活动</button> -->
-    <activity-top class="activity-top"></activity-top>
-    <view class="uni-flex uni-row">
-      <view class="flex-item">
-        <title class="news-box-title">最新动态</title>
-        <view class="news-box">
-          <view class="news-item">
-            <view><image class="news-item-avatar" src="../../static/images/1.jpg" /></view>
-            <view><label class="news-label uni-bg-green">闲置</label>
-            <span class="news-item-content">九成新ps5游戏机...</span></view>
+  <view class="container">
+    <view class="section">
+      <text class="title">附近活动</text>
+      <swiper class="swiper" indicator-dots="true" autoplay="true">
+        <swiper-item v-for="(item, index) in activities" :key="index">
+          <image class="image" :src="item.image" mode="aspectFill"></image>
+          <text class="name">{{item.name}}</text>
+        </swiper-item>
+      </swiper>
+      <view class="categories">
+        <view class="category" v-for="(item, index) in categories" :key="index" :style="{ 'background-color': item.color }">
+          <text class="name">{{item.name}}</text>
+          <view class="info">
+            <text class="count">{{item.count}}</text>
+            <text class="status">{{item.status}}</text>
           </view>
-          <view class="news-item">
-            <view><image class="news-item-avatar" src="../../static/images/2.jpg" /></view>
-            <view><label class="news-label uni-bg-dark-blue">活动</label>
-            <span class="news-item-content">青龙湖公园露营...</span></view>
-          </view>
-          <view class="news-item">
-            <view><image class="news-item-avatar" src="../../static/images/3.jpg" /></view>
-            <view><label class="news-label uni-bg-bright-blue">话题</label>
-            <span class="news-item-content">如何看待微博热...</span></view>
-          </view>
+          <button class="button" @click="join(item)">去参加</button>
         </view>
-      </view>
-      <view class="flex-item box">
-        <view class="flex">
-          <view><span class="news-box-title">寻宝</span> </view>
-          <view><image class="box-logo" :src="treasureLogoUrl"></image></view>
-        </view>
-        <image class="box-cover" :src="searchCoverUrl"></image>
       </view>
     </view>
-    <view class="uni-flex uni-row">
-      <view class="flex-item box" @click="gotoActivity">
-        <view class="flex">
-          <view><span class="news-box-title">活动</span></view>
-          <view><image class="box-logo" :src="treasureLogoUrl"></image></view>
+    <view class="section">
+      <text class="title">虚拟超市</text>
+      <scroll-view class="scroll-view" scroll-x="true">
+        <view class="item" v-for="(item, index) in products" :key="index">
+          <image class="image" style="border-radius:5px;" :src="item.image" mode="aspectFill"></image>
+          <text class="name">{{item.name}}</text>
+          <text class="price">{{item.price}}</text>
         </view>
-        <image class="box-cover" :src="activityCoverUrl"></image>
+      </scroll-view>
+    </view>
+    <view class="section">
+      <text class="title">二手交换</text>
+      <view class="grid">
+        <view class="item" v-for="(item, index) in exchanges" :key="index">
+          <image class="image" style="border-radius:5px;" :src="item.image" mode="aspectFill"></image>
+          <text class="name">{{item.name}}</text>
+          <text class="price">{{item.price}}</text>
+        </view>
       </view>
     </view>
   </view>
 </template>
 
 <script>
-
-import activitytop from '@/components/activity-top/activity-top.vue'
-
 export default {
- components: {
-    activitytop
-  },
   data() {
     return {
-      title: "Hello",
-      treasureLogoUrl: "../../static/images/treasure.png",
-      activityCoverUrl: "../../static/images/4.png",
-      searchCoverUrl:"../../static/images/5.jpg"
+      categories: [
+        {
+          name: "运动",
+          count: "3个活动正在进行中",
+          status: "已有100人参与",
+          color:"#add8e6",
+          url: "https://www.bing.com/th?id=OIP.Sy9rmSh7VOYzlQxW1qZ0eQHaE7&w=139&h=96&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2"
+        },
+        {
+          name: "游戏",
+          count: "2个活动正在进行中",
+          status: "已有50人参与",
+          color:"#ffa500;",
+          url: "https://www.bing.com/th?id=OIP.Lrn0Pg8PE1_YjJ48_yLYqAHaFj&w=137&h=104&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2"
+        },
+        {
+          name: "文娱",
+          count: "1个活动未开始",
+          status: "已有20人报名",
+          color:"#00ffff;",
+          url: "https://www.bing.com/th?id=OIP.r9r7YYwxbO_FSECx3BB9ggHaEK&w=167&h=96&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2"
+        }
+      ],
+      activities: [
+        {
+          image: "https://www.bing.com/th?id=OIP.Sy9rmSh7VOYzlQxW1qZ0eQHaE7&w=139&h=96&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2",
+          name: "活动1",
+          color:"#add8e6;",
+        },
+        {
+          image: "https://www.bing.com/th?id=OIP.Lrn0Pg8PE1_YjJ48_yLYqAHaFj&w=137&h=104&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2",
+          name: "活动2",
+          color:"#ffa500;",
+        },
+        {
+          image: "https://www.bing.com/th?id=OIP.r9r7YYwxbO_FSECx3BB9ggHaEK&w=167&h=96&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2",
+          name: "活动3",
+          color:"#00ffff;",
+        }
+      ],
+      products: [
+        {
+          image: "https://www.bing.com/th?id=OIP.HpnI-6otBP6nyqv0a-pW7QHaE7&w=146&h=97&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2",
+          name: "商品1",
+          price: "￥9.9"
+        },
+        {
+          image: "https://www.bing.com/th?id=OIP.E5Ce0SanbLrLCq6j5IQXVQHaE7&w=146&h=97&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2",
+          name: "商品2",
+          price: "￥19.9"
+        },
+        {
+          image: "https://www.bing.com/th?id=OIP.KXKolcN1mOqUos-SKc0UkQHaE7&w=146&h=103&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2",
+          name: "商品3",
+          price: "￥29.9"
+        }
+      ],
+      exchanges: [
+        {
+          image: "https://www.bing.com/th?id=OIP.e6ErqIOSWqm6YjhsN5QxbwHaE7&w=146&h=97&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2",
+          name: "交换物品1",
+          price: "￥5"
+        },
+        {
+          image: "https://www.bing.com/th?id=OIP.F7HqBTMUHXTE2gXZJCyz5wHaE7&w=146&h=103&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2",
+          name: "交换物品2",
+          price: "￥10"
+        },
+        {
+          image: "https://www.bing.com/th?id=OIP.5fK4_SZrOCf09dHG24X1lgHaE8&w=146&h=103&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2",
+          name: "交换物品3",
+          price: "￥15"
+        }
+      ]
     };
   },
-  onLoad() {
-    let { user } = uni.getStorageSync("userInfo");
-    if (user == undefined || user == null) {
+  methods:{
+    join(item){
       uni.navigateTo({
-        url: `/pages/login/login`,
-      });
+        url:item.url
+      })
     }
-  },
-  methods: {
-    gotoRegister() {
-      uni.navigateTo({
-        url: `/pages/login/login`,
-      });
-    }, 
-    gotoActivity() {
-      uni.navigateTo({
-        url: `/pages/activity/activity`,
-      });
-    },
-  },
+  }
 };
 </script>
 
-<style lang="scss">
-
-.activity-top {
-  margin-top: 10px;
-  margin-left: 10px;
-  width: 100%;
-}
-
-.content {
-  display: flex;
-  flex-direction: column;
-  align-items: left;
-  justify-content: center;
-}
-
-.uni-flex {
-  display: flex;
-  width: 100%;
-}
-
-.uni-row {
-  width: 100%;
-  height: 300rpx;
-  margin-top: 10px;
-}
-
-.flex {
-  display: flex;
-}
-
-.flex-item {
-  width: 50%;
-  align-items: center;
-  margin-top: 20rpx;
-  margin-left: 20rpx;
-}
-
-.news-box {
-  padding-top: 10rpx;
-}
-
-.news-box-title {
-  font-size: 13px;
-}
-
-.news-box-item {
-  padding: 5rpx;
-}
-
-.news-label {
-  border: 1px;
-  border-radius: 4px;
-  padding: 10rpx;
-  font-size: 11px;
+<style lang='scss'>
+text {
   color: white;
-  vertical-align: middle;
 }
-
-.news-item {
-  display: flex;
-  margin-bottom: 10px;
-}
-
-.news-item-avatar {
-    width: 50rpx;
-    height: 50rpx;
-    border-radius: 50%;
-    margin-right: 5px;
-}
-
-.news-item-content {
-  font-size: 11px;
-  margin-left: 5px;
-}
-
-.uni-bg-green {
-  background-color: rgba(14, 248, 52, 1);
-}
-
-.uni-bg-dark-blue {
-  background-color: rgba(47, 31, 91, 1);
-}
-
-.uni-bg-bright-blue {
-  background-color: rgba(7, 207, 207, 1);
-}
-
-.news-box-title-share {
-  position: absolute;
-  width: 20px;
-  height: 20px;
-  left: 259px;
-  top: 72px;
-  background-image: "./static/icons/Forward.png";
-}
-
-.box-logo {
-  width: 16px;
-  height: 16px;
-  margin-left: 5px;
-}
-
-.box {
-  margin-right: 20rpx;
-}
-
-.box-cover {
+.container {
   width: 100%;
   height: 100%;
-  border: 1px;
-  border-radius: 10px;
-  margin-top: 10rpx;
 }
+.section {
+  margin-top: 10px;
+  padding: 10px;
+}
+
+.title {
+  font-size: 18px;
+}
+.categories {
+  display: flex;
+  justify-content: space-between;
+}
+.category {
+  margin-top: 10px;
+  width: calc(33% - 10px);
+  height: 100px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  &.button {
+  background-color: #f00;
+  color: #fff;
+  width: 80%;
+  }
+}
+.name {
+  margin-top: 10px;
+  margin-left: 10px;
+  font-size: 16px;
+}
+.info {
+  margin-top: 10px;
+  margin-left: 10px;
+}
+.count {
+  font-size: 14px;
+}
+.status {
+  margin-top: 5px;
+  font-size: 14px;
+}
+.swiper {
+  width: 100%;
+  height: 200px;
+}
+.image {
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+}
+.name {
+  margin-top: 5px;
+  font-size: 16px;
+}
+.scroll-view {
+  width: 100%;
+  height: 150px;
+}
+.item {
+  display: inline-block;
+  width: 120px;
+  height: 120px;
+  padding-left: 10px;
+  &.image {
+    border: 1cm;
+    border-radius: 5px;
+  }
+}
+.price {
+  margin-top: 5px;
+  color: #f00;
+}
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 </style>
