@@ -1,9 +1,9 @@
-/* CDN 服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
+/* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
 @font-face {
   font-family: 'iconfont';  /* Project id 3952583 */
-  src: url('//at.alicdn.com/t/c/font_3952583_hgx89akka6v.woff2?t=1679235967631') format('woff2'),
-       url('//at.alicdn.com/t/c/font_3952583_hgx89akka6v.woff?t=1679235967631') format('woff'),
-       url('//at.alicdn.com/t/c/font_3952583_hgx89akka6v.ttf?t=1679235967631') format('truetype');
+  src: url('//at.alicdn.com/t/c/font_3952583_c0wnmygchpp.woff2?t=1692412121787') format('woff2'),
+       url('//at.alicdn.com/t/c/font_3952583_c0wnmygchpp.woff?t=1692412121787') format('woff'),
+       url('//at.alicdn.com/t/c/font_3952583_c0wnmygchpp.ttf?t=1692412121787') format('truetype');
 }
 
 .iconfont {
@@ -14,12 +14,76 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-back:before {
-  content: "\e61e";
+.icon-game:before {
+  content: "\e618";
+}
+
+.icon-icon-add:before {
+  content: "\e60c";
+}
+
+.icon-add-circle:before {
+  content: "\e664";
+}
+
+.icon-arrow-down:before {
+  content: "\e665";
+}
+
+.icon-calendar1:before {
+  content: "\e667";
+}
+
+.icon-notification:before {
+  content: "\e679";
+}
+
+.icon-more1:before {
+  content: "\e67a";
 }
 
 .icon-picture:before {
   content: "\e67c";
+}
+
+.icon-save:before {
+  content: "\e67d";
+}
+
+.icon-search:before {
+  content: "\e67e";
+}
+
+.icon-share1:before {
+  content: "\e67f";
+}
+
+.icon-select:before {
+  content: "\e680";
+}
+
+.icon-success:before {
+  content: "\e681";
+}
+
+.icon-setting:before {
+  content: "\e682";
+}
+
+.icon-text1:before {
+  content: "\e683";
+}
+
+.icon-text:before {
+  content: "\e60b";
+}
+
+.icon-back:before {
+  content: "\e61e";
+}
+
+.icon-upload-img:before {
+  content: "\e61f";
 }
 
 .icon-down-arrow:before {
@@ -27,7 +91,6 @@
 }
 
 .icon-add:before {
-  color: greenyellow;
   content: "\e613";
 }
 
@@ -39,8 +102,7 @@
   content: "\e631";
 }
 
-.icon-pen:before {
-  color: greenyellow;
+.icon-xiugai:before {
   content: "\e604";
 }
 
@@ -49,12 +111,10 @@
 }
 
 .icon-location:before {
-  color: greenyellow;
   content: "\e606";
 }
 
 .icon-calendar:before {
-  color: greenyellow;
   content: "\e752";
 }
 
@@ -67,31 +127,10 @@
 }
 
 .icon-share:before {
-  color: greenyellow;
   content: "\e760";
-}
-
-.icon-share1:before {
-  color: greenyellow;
-  content: "\e67f";
 }
 
 .icon-trash:before {
   content: "\e763";
 }
-
-.icon-text:before {
-  content: "\e60b";
-}
-
-.icon-success:before{
-  color: greenyellow;
-  content: "\e681";
-}
-
-.icon-game::before{
-  color: aqua;
-  content: "\e618";
-}
-
 
