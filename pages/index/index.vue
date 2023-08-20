@@ -1,7 +1,8 @@
 <template>
   <view class="container">
+    <activity-top ></activity-top>
     <view class="section">
-      <text class="title">附近活动</text>
+      <text class="title">附近活动</text> <text class="iconfont icon-game"></text>
       <swiper class="swiper" indicator-dots="true" autoplay="true">
         <swiper-item v-for="(item, index) in activities" :key="index">
           <image class="image" :src="item.image" mode="aspectFill"></image>
@@ -56,7 +57,12 @@
 </template>
 
 <script>
+import activitytop from "@/components/activity-top/activity-top.vue";
+
 export default {
+  components: {
+    activitytop,
+  },
   data() {
     return {
       categories: [
@@ -159,7 +165,7 @@ export default {
 };
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
 text {
   color: white;
 }
@@ -168,13 +174,18 @@ text {
   height: 100%;
 }
 .section {
-  margin-top: 10px;
   padding: 10px;
 }
 
 .title {
-  font-size: 18px;
+  font-size: 16px;
+  color: gray;
 }
+.icon-game {
+    margin-left: 5px;
+    font-size: 18px;
+    color: yellow;
+  }
 .categories {
   display: flex;
   justify-content: space-between;
@@ -185,12 +196,6 @@ text {
   height: 100px;
   border: 1px solid #ccc;
   border-radius: 10px;
-}
-.a-button {
-  background-color: #f00;
-  color: #fff;
-  width: 100px;
-  height: 40px;
 }
 
 .name {
@@ -222,10 +227,6 @@ text {
 .name {
   margin-top: 5px;
   font-size: 16px;
-}
-.scroll-view {
-  width: 100%;
-  height: 150px;
 }
 .item {
   display: inline-block;

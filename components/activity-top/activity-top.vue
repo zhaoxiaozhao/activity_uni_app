@@ -1,11 +1,11 @@
 <template>
-  <view class="uni-flex uni-row" style="height:20px">
-    <view class="flex-item">
-      <text class="address-text">远大都市风景一期</text>
-      <text class="iconfont icon-location" style="padding-left:10rpx;"></text>
-      <text class="address-unit" style="padding-left:10rpx;font-size:16rpx;">0.2km</text>
+  <view class="top">
+    <view class="left">
+      <text class="location">远大都市风景一期</text>
+      <text class="iconfont icon-location"></text>
+      <text class="distance">0.2km</text>
     </view>
-    <view class="flex-item right">
+    <view class="plus">
       <text class="iconfont icon-add"></text>
     </view>
   </view>
@@ -24,46 +24,41 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.flex-item {
-  text-align: center;
-  margin-top: 5px;
-  margin-left: 0px;
-  &.right{
-      text-align: right;
-      padding-right: 40rpx;
-  }
-}
-.box {
-  display: flex;
-}
-.address {
+<style lang="scss" scoped>
+.top {
   display: flex;
   flex-direction: row;
   align-items: left;
-
-  .address-text {
-    font-size: 14px;
+  justify-content: left;
+  margin-top: 10px;
+  margin-left: 10px;
+  .left {
+    display: flex;
+    flex-direction: row;
+    align-items: left;
+    justify-content: left;
+    width: 50%;
+    .location {
+      font-size: 14px;
+    }
+    .icon-location {
+      padding-left: 5px;
+    }
+    .distance {
+      font-size: 10px;
+      margin-top: 5px;
+      padding-left: 5px;
+    }
   }
 
-  .address-icon {
-    width: 24rpx;
-    height: 24rpx;
-    padding-top: 10rpx;
-    margin-left: 10rpx;
-  }
-
-  .address-unit {
-    font-size: 14rpx;
-    padding-top: 12rpx;
-  }
-}
-
-.plus-bar {
-  display: flex;
-  .plus-icon {
-    width: 24rpx;
-    height: 24rpx;
+  .plus {
+    display: flex;
+    width: 50%;
+    justify-content: flex-end;
+    margin-right: 10px;
+    .icon-add {
+      font-size: 20px;
+    }
   }
 }
 </style>
