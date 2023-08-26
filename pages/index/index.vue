@@ -1,8 +1,9 @@
 <template>
   <view class="container">
-    <activity-top ></activity-top>
+    <activity-top></activity-top>
     <view class="section">
-      <text class="title">附近活动</text> <text class="iconfont icon-game"></text>
+      <text class="title">附近活动</text>
+      <text class="iconfont icon-game"></text>
       <swiper class="swiper" indicator-dots="true" autoplay="true">
         <swiper-item v-for="(item, index) in activities" :key="index">
           <image class="image" :src="item.image" mode="aspectFill"></image>
@@ -26,6 +27,7 @@
     </view>
     <view class="section">
       <text class="title">虚拟超市</text>
+      <text class="iconfont icon-store"></text>
       <view class="grid">
         <view
           class="item"
@@ -40,6 +42,7 @@
     </view>
     <view class="section">
       <text class="title">二手交换</text>
+      <text class="iconfont icon-recycle"></text>
       <view class="grid">
         <view class="item" v-for="(item, index) in exchanges" :key="index">
           <image
@@ -48,8 +51,11 @@
             :src="item.image"
             mode="aspectFill"
           ></image>
-          <text class="name">{{ item.name }}</text>
-          <text class="price">{{ item.price }}</text>
+          <view class="item-box">
+            <text class="name">{{ item.name }}</text>
+            <image class="avatar" :src="item.user.avatar"></image>
+            <canvas class="avatar-canvas" :canvas-id="item.id"></canvas>
+          </view>
         </view>
       </view>
     </view>
@@ -62,6 +68,17 @@ import activitytop from "@/components/activity-top/activity-top.vue";
 export default {
   components: {
     activitytop,
+  },
+  onReady() {
+    for (var key in this.exchanges) {
+      const ctx = uni.createCanvasContext(this.exchanges[key].id, this);
+      ctx.arc(5, 5, 5, 0, 2 * Math.PI);
+      debugger
+      const color = this.exchanges[key].user.isOnline == true ? "#00FF00" : "gray";
+      ctx.setFillStyle(color);
+      ctx.fill();
+      ctx.draw();
+    }
   },
   data() {
     return {
@@ -130,22 +147,40 @@ export default {
       ],
       exchanges: [
         {
+          id: "1",
           image:
             "https://www.bing.com/th?id=OIP.e6ErqIOSWqm6YjhsN5QxbwHaE7&w=146&h=97&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2",
           name: "交换物品1",
           price: "￥5",
+          user: {
+            nick: "Changyou",
+            avatar: "/static/images/1.jpg",
+            isOnline: true,
+          },
         },
         {
+          id: "2",
           image:
             "https://www.bing.com/th?id=OIP.F7HqBTMUHXTE2gXZJCyz5wHaE7&w=146&h=103&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2",
           name: "交换物品2",
           price: "￥10",
+          user: {
+            nick: "John",
+            avatar: "/static/images/2.jpg",
+            isOnline: false,
+          },
         },
         {
+          id: "3",
           image:
             "https://www.bing.com/th?id=OIP.5fK4_SZrOCf09dHG24X1lgHaE8&w=146&h=103&c=8&rs=1&qlt=90&o=6&dpr=1.5&pid=3.1&rm=2",
           name: "交换物品3",
           price: "￥15",
+          user: {
+            nick: "Lisa",
+            avatar: "/static/images/3.jpg",
+            isOnline: true,
+          },
         },
       ],
     };
@@ -175,6 +210,7 @@ text {
 }
 .section {
   padding: 10px;
+  margin-bottom: 10px;
 }
 
 .title {
@@ -182,10 +218,20 @@ text {
   color: gray;
 }
 .icon-game {
-    margin-left: 5px;
-    font-size: 18px;
-    color: yellow;
-  }
+  margin-left: 5px;
+  font-size: 18px;
+  color: yellow;
+}
+.icon-store {
+  margin-left: 5px;
+  font-size: 18px;
+  color: yellow;
+}
+.icon-recycle {
+  margin-left: 5px;
+  font-size: 18px;
+  color: yellow;
+}
 .categories {
   display: flex;
   justify-content: space-between;
@@ -245,9 +291,29 @@ text {
 .grid {
   display: flex;
   flex-wrap: wrap;
+  margin-top: 10px;
   &.item {
     width: calc(25%);
     height: calc(25%);
   }
+}
+
+.item-box {
+  display: flex;
+  align-content: center;
+}
+
+.avatar {
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 25rpx;
+  margin-left: 5rpx;
+}
+.avatar-canvas {
+  width: 10px;
+  height: 10px;
+  position: absolute;
+  margin-left: 95px;
+  margin-top:22px;
 }
 </style>
