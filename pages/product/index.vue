@@ -1,16 +1,32 @@
 <template>
   <view class="container">
-    <view class="search-bar">
+    <!-- <view class="search-bar">
       <input class="input" type="text" placeholder="搜索商品" />
       <text
         class="iconfont icon-search"
         style="padding-left: 10rpx; font-size: 25px; padding-top: 6px"
         @click="search"
       ></text>
-    </view>
+    </view> -->
+    <uni-search-bar
+      :show="true"
+      :show-cancel-button="true"
+      :show-icon="true"
+      :show-button="true"
+      :button-text="'Search'"
+      :button-type="'primary'"
+      :placeholder="'Enter goods name'"
+      @confirm="confirm"
+      @cancel="cancel"
+    />
     <view class="content">
       <view class="grid">
-        <view class="item" v-for="(item, index) in products" :key="index" @click="gotoDetails(item.id)">
+        <view
+          class="item"
+          v-for="(item, index) in products"
+          :key="index"
+          @click="gotoDetails(item.id)"
+        >
           <image class="image" :src="item.image" mode="aspectFill"></image>
           <text class="name"
             >{{ item.name }} {{ item.sku }}
@@ -23,7 +39,7 @@
   </view>
 </template>
   
-  <script>
+<script>
 export default {
   data() {
     return {
@@ -79,17 +95,41 @@ export default {
     // 根据categoryId查询商品列表
   },
   methods: {
-
+    confirm(e) {
+      // handle the confirm action of the search bar
+      // e.detail.value is the input value
+      this.value = e.detail.value;
+      console.log("confirm:", this.value);
+      // call your search function here
+      this.searchGoods(this.value);
+    },
+    cancel(e) {
+      // handle the cancel action of the search bar
+      // e.detail.value is the input value
+      this.value = e.detail.value;
+      console.log("cancel:", this.value);
+      // clear your search results here
+      this.clearGoods();
+    },
+    searchGoods(value) {
+      // your search function logic here
+      // for example, you can use uni.request to send a request to your backend API with the value as a parameter
+      // then you can use uni.navigateTo to jump to another page that displays the search results
+    },
+    clearGoods() {
+      // your clear function logic here
+      // for example, you can use uni.navigateBack to go back to the previous page that shows all the goods
+    },
     gotoDetails(id) {
-        uni.navigateTo({
+      uni.navigateTo({
         url: "/pages/product/details?id=" + id,
       });
-    }
-  }
+    },
+  },
 };
 </script>
   
-  <style lang='scss'>
+<style lang='scss'>
 .container {
   width: 100%;
   height: 100%;

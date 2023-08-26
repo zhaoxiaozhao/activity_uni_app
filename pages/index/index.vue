@@ -73,7 +73,6 @@ export default {
     for (var key in this.exchanges) {
       const ctx = uni.createCanvasContext(this.exchanges[key].id, this);
       ctx.arc(5, 5, 5, 0, 2 * Math.PI);
-      debugger
       const color = this.exchanges[key].user.isOnline == true ? "#00FF00" : "gray";
       ctx.setFillStyle(color);
       ctx.fill();
