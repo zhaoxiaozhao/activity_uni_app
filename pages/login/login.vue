@@ -189,7 +189,7 @@ export default {
         });
       }
 
-      debugger
+      // debugger
 
       let registerWxUserInfo = {
         Avatar: that.avatarUrl,

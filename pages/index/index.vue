@@ -59,6 +59,9 @@
         </view>
       </view>
     </view>
+    <!-- <view class="edgeInsetBottom"></view> -->
+		<!-- 绝对定位的视图需要考虑 tabBar 遮挡的问题，bottom 应该加上 tabBar 的高度 -->
+		<!-- <view class="fixedView"></view> -->
   </view>
 </template>
 
@@ -211,6 +214,19 @@ text {
   padding: 10px;
   margin-bottom: 10px;
 }
+.edgeInsetBottom {
+		width: 750rpx;
+		height: var(--window-bottom);
+		background-color: #FFFFFF;
+	}
+
+	.fixedView {
+		background-color: #4CD964;
+		position: fixed;
+		width: 750rpx;
+		height: 30px;
+		bottom: var(--window-bottom);
+	}
 
 .title {
   font-size: 16px;

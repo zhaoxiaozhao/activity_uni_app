@@ -49,12 +49,54 @@
                 "enablePullDownRefresh": false
             }
         }
+        ,
+		{
+            "path" : "pages/mine/index",
+            "style" :                                                                                    
+            {
+                "navigationBarTitleText": "我的",
+                "enablePullDownRefresh": false
+            }
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
+	},
+    "tabBar": {
+		"blurEffect":"extralight",
+		"color": "#999999",
+		"borderStyle": "black",
+		"spacing": "5px",
+		"height": "50px",
+		"selectedColor": "#0062cc",
+		"list": [
+		{
+		    "text" : "主页",
+		    "iconPath" : "static/icons/ic_tabbar_home_nor.png",
+		    "selectedIconPath" : "static/icons/ic_tabbar_home_sel.png",
+			"pagePath": "pages/index/index"
+		},
+		{
+		    "text" : "活动",
+		    "iconPath" : "static/icons/_activity.png",
+		    "selectedIconPath" : "static/icons/activity.png",
+			"pagePath": "pages/activity/activity"
+		},
+		{
+		    "text" : "商品",
+		    "iconPath" : "static/icons/_cart.png",
+		    "selectedIconPath" : "static/icons/cart.png",
+			"pagePath": "pages/product/index"
+		},
+		{
+		    "text" : "我的",
+		    "iconPath" : "static/icons/ic_tabbar_my_nor.png",
+		    "selectedIconPath" : "static/icons/ic_tabbar_my_sel.png",
+			"pagePath": "pages/mine/index"
+		}]
 	},
 	"uniIdRouter": {}
 }
