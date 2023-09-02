@@ -1,12 +1,17 @@
 <template>
   <view class="top">
     <view class="left">
-      <text class="location">远大都市风景一期</text>
-      <text class="iconfont icon-location"></text>
-      <text class="distance">0.2km</text>
+      <uni-data-select
+        class="select"
+        v-model="value"
+        :localdata="range"
+        @change="change"
+        :clear="false"
+      ></uni-data-select>
     </view>
-    <view class="plus">
-      <text class="iconfont icon-add"></text>
+    <view class="location">
+      <text class="iconfont icon-location" @click="onChooseLocation"></text>
+      <text class="distance">0.1m</text>
     </view>
   </view>
 </template>
@@ -14,13 +19,32 @@
 <script>
 export default {
   name: "activitytop",
+  props: ["index", "options"],
   data() {
     return {
-      locationIcon: "../../static/icons/Location.png",
-      plusIcon: "../../static/icons/Plus.png",
+      location: "远大都市风景一区",
+      range: this.options,
+      value: this.index,
     };
   },
-  methods: {},
+  onload() {},
+  methods: {
+    change(e) {
+      debugger;
+      this.$emit("change", e);
+    },
+    onChooseLocation() {
+      debugger;
+      uni.chooseLocation({
+        success: function (res) {
+          console.log("位置名称：" + res.name);
+          console.log("详细地址：" + res.address);
+          console.log("纬度：" + res.latitude);
+          console.log("经度：" + res.longitude);
+        },
+      });
+    },
+  },
 };
 </script>
 
@@ -38,17 +62,6 @@ export default {
     align-items: left;
     justify-content: left;
     width: 50%;
-    .location {
-      font-size: 14px;
-    }
-    .icon-location {
-      padding-left: 5px;
-    }
-    .distance {
-      font-size: 10px;
-      margin-top: 5px;
-      padding-left: 5px;
-    }
   }
 
   .plus {
@@ -60,5 +73,19 @@ export default {
       font-size: 20px;
     }
   }
+}
+.location {
+  margin-top: 15px;
+}
+.distance {
+  font-size: 12px;
+  padding-left: 5rpx;
+}
+.select {
+  width: 200px;
+  height: 40px;
+  color: #333333;
+  background-color: #ffffff;
+  border-radius: 5px;
 }
 </style>

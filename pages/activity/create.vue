@@ -290,7 +290,6 @@ export default {
       isView: false,
       isEdit: false,
       isProgress: false,
-
       userId: 0,
       showPicker: false,
       type: "rangetime",

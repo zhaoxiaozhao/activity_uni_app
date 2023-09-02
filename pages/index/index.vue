@@ -1,6 +1,10 @@
 <template>
   <view class="container">
-    <activity-top></activity-top>
+    <activity-top
+      :index="value"
+      :options="options"
+      @change="changeLocation"
+    ></activity-top>
     <view class="section">
       <text class="title">附近活动</text>
       <text class="iconfont icon-game"></text>
@@ -60,8 +64,8 @@
       </view>
     </view>
     <!-- <view class="edgeInsetBottom"></view> -->
-		<!-- 绝对定位的视图需要考虑 tabBar 遮挡的问题，bottom 应该加上 tabBar 的高度 -->
-		<!-- <view class="fixedView"></view> -->
+    <!-- 绝对定位的视图需要考虑 tabBar 遮挡的问题，bottom 应该加上 tabBar 的高度 -->
+    <!-- <view class="fixedView"></view> -->
   </view>
 </template>
 
@@ -76,7 +80,8 @@ export default {
     for (var key in this.exchanges) {
       const ctx = uni.createCanvasContext(this.exchanges[key].id, this);
       ctx.arc(5, 5, 5, 0, 2 * Math.PI);
-      const color = this.exchanges[key].user.isOnline == true ? "#00FF00" : "gray";
+      const color =
+        this.exchanges[key].user.isOnline == true ? "#00FF00" : "gray";
       ctx.setFillStyle(color);
       ctx.fill();
       ctx.draw();
@@ -84,6 +89,17 @@ export default {
   },
   data() {
     return {
+      value: 1,
+      location: "远大都市风景一区",
+      distance: 0,
+      options: [
+        {
+          value: 0, text: "远大都市风景一区"
+        },
+        {
+          value: 1, text: "青龙湖湿地公园"
+        },
+      ],
       categories: [
         {
           name: "运动",
@@ -188,13 +204,16 @@ export default {
     };
   },
   methods: {
+    changeLocation(value) {
+      this.value = value;
+    },
     join(item) {
-      uni.navigateTo({
+      uni.switchTab({
         url: item.url,
       });
     },
     gotoProducts(id) {
-      uni.navigateTo({
+      uni.switchTab({
         url: "/pages/product/index?id=" + id,
       });
     },
@@ -215,18 +234,18 @@ text {
   margin-bottom: 10px;
 }
 .edgeInsetBottom {
-		width: 750rpx;
-		height: var(--window-bottom);
-		background-color: #FFFFFF;
-	}
+  width: 750rpx;
+  height: var(--window-bottom);
+  background-color: #ffffff;
+}
 
-	.fixedView {
-		background-color: #4CD964;
-		position: fixed;
-		width: 750rpx;
-		height: 30px;
-		bottom: var(--window-bottom);
-	}
+.fixedView {
+  background-color: #4cd964;
+  position: fixed;
+  width: 750rpx;
+  height: 30px;
+  bottom: var(--window-bottom);
+}
 
 .title {
   font-size: 16px;
@@ -329,6 +348,6 @@ text {
   height: 10px;
   position: absolute;
   margin-left: 95px;
-  margin-top:22px;
+  margin-top: 22px;
 }
 </style>

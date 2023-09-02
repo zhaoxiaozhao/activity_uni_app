@@ -62,7 +62,8 @@
             "scope.userLocation" : {
                 "desc" : "测试"
             }
-        }
+        },
+		"requiredPrivateInfos": ["chooseAddress","chooseLocation"]
     },
     "mp-alipay" : {
         "usingComponents" : true

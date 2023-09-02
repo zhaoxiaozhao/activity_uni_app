@@ -11,6 +11,12 @@ export default {
     isExpired: false,
   },
   onLaunch: function () {
+    uni.authorize({
+      scope:"scope.userLocation",
+      success:function() {
+        console.log ("authorize successful.")
+      }
+    })
     console.log("App Launch");
   },
   onShow: function () {
