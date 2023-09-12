@@ -1,10 +1,11 @@
-{	"easycom": {
+{
+	"easycom": {
 		"autoscan": true,
 		"custom": {
 			"^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
 		}
 	},
-	"pages": [ 
+	"pages": [
 		{
 			"path": "pages/index/index",
 			"style": {
@@ -16,87 +17,110 @@
 			"style": {
 				"navigationBarTitleText": "登录"
 			}
+		},
+		{
+			"path": "pages/activity/index",
+			"style": {
+				"navigationBarTitleText": "活动",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/product/index",
+			"style": {
+				"navigationBarTitleText": "商品列表",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/product/details",
+			"style": {
+				"navigationBarTitleText": "商品详情",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/activity/create",
+			"style": {
+				"navigationBarTitleText": "创建活动",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/exchange/index",
+			"style": {
+				"navigationBarTitleText": "物物交换",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/exchange/detail",
+			"style": {
+				"navigationBarTitleText": "交换详情",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/order/index",
+			"style": {
+				"navigationBarTitleText": "订单列表",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/order/detail",
+			"style": {
+				"navigationBarTitleText": "订单详情",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/mine/index",
+			"style": {
+				"navigationBarTitleText": "我的",
+				"enablePullDownRefresh": false
+			}
 		}
-        ,{
-            "path" : "pages/activity/activity",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "活动",
-                "enablePullDownRefresh": false
-            }
-        }        
-		,{
-            "path" : "pages/product/index",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "商品列表",
-                "enablePullDownRefresh": false
-            }
-        },
-		{
-            "path" : "pages/product/details",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "商品详情",
-                "enablePullDownRefresh": false
-            }
-        },
-		{
-            "path" : "pages/activity/create",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "创建活动",
-                "enablePullDownRefresh": false
-            }
-        }
-        ,
-		{
-            "path" : "pages/mine/index",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "我的",
-                "enablePullDownRefresh": false
-            }
-        }
-    ],
+	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
 	},
-    "tabBar": {
-		"blurEffect":"extralight",
+	"tabBar": {
+		"blurEffect": "extralight",
 		"color": "#999999",
 		"borderStyle": "black",
 		"spacing": "5px",
 		"height": "50px",
 		"selectedColor": "#0062cc",
 		"list": [
-		{
-		    "text" : "主页",
-		    "iconPath" : "static/icons/ic_tabbar_home_nor.png",
-		    "selectedIconPath" : "static/icons/ic_tabbar_home_sel.png",
-			"pagePath": "pages/index/index"
-		},
-		{
-		    "text" : "活动",
-		    "iconPath" : "static/icons/_activity.png",
-		    "selectedIconPath" : "static/icons/activity.png",
-			"pagePath": "pages/activity/activity"
-		},
-		{
-		    "text" : "商品",
-		    "iconPath" : "static/icons/_cart.png",
-		    "selectedIconPath" : "static/icons/cart.png",
-			"pagePath": "pages/product/index"
-		},
-		{
-		    "text" : "我的",
-		    "iconPath" : "static/icons/ic_tabbar_my_nor.png",
-		    "selectedIconPath" : "static/icons/ic_tabbar_my_sel.png",
-			"pagePath": "pages/mine/index"
-		}]
+			{
+				"text": "主页",
+				"iconPath": "static/icons/ic_tabbar_home_nor.png",
+				"selectedIconPath": "static/icons/ic_tabbar_home_sel.png",
+				"pagePath": "pages/index/index"
+			},
+			{
+				"text": "活动",
+				"iconPath": "static/icons/_activity.png",
+				"selectedIconPath": "static/icons/activity.png",
+				"pagePath": "pages/activity/index"
+			},
+			{
+				"text": "商品",
+				"iconPath": "static/icons/_cart.png",
+				"selectedIconPath": "static/icons/cart.png",
+				"pagePath": "pages/product/index"
+			},
+			{
+				"text": "我的",
+				"iconPath": "static/icons/ic_tabbar_my_nor.png",
+				"selectedIconPath": "static/icons/ic_tabbar_my_sel.png",
+				"pagePath": "pages/mine/index"
+			}
+		]
 	},
 	"uniIdRouter": {}
 }

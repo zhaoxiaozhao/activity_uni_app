@@ -122,7 +122,7 @@ export default {
     },
     gotoDetails(id) {
       uni.navigateTo({
-        url: "/pages/product/details?id=" + id,
+        url: "/pages/product/detail?id=" + id,
       });
     },
   },
