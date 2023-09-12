@@ -10,8 +10,8 @@
       ></uni-data-select>
     </view>
     <view class="location">
-      <text class="iconfont icon-location" @click="onChooseLocation"></text>
-      <text class="distance">0.1m</text>
+      <text class="iconfont icon-location" @click="change2"></text>
+      <text class="distance">{{ distance }}m</text>
     </view>
   </view>
 </template>
@@ -19,30 +19,33 @@
 <script>
 export default {
   name: "activitytop",
-  props: ["index", "options"],
+  props: {
+    idx:0,
+    options:[],
+    distance:0,
+  },
   data() {
     return {
       location: "远大都市风景一区",
       range: this.options,
-      value: this.index,
+      value: this.idx,
+      distance: this.distance,
     };
+  },
+  watch: {
+    idx(n) {
+      debugger;
+      this.value = n;
+    },
   },
   onload() {},
   methods: {
     change(e) {
-      debugger;
       this.$emit("change", e);
+      this.value = e;
     },
-    onChooseLocation() {
-      debugger;
-      uni.chooseLocation({
-        success: function (res) {
-          console.log("位置名称：" + res.name);
-          console.log("详细地址：" + res.address);
-          console.log("纬度：" + res.latitude);
-          console.log("经度：" + res.longitude);
-        },
-      });
+    change2(e) {
+      this.$emit("change2", e);
     },
   },
 };
