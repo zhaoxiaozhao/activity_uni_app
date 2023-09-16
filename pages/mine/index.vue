@@ -46,14 +46,12 @@
         <!-- 交换记录文字 -->
         <text class="text">交换记录</text>
       </view>
-      <view class="module" @tap="goToExchanges">
-        <!-- 交换记录图标 -->
+      <view class="module" @tap="goToMessages">
         <image
           class="icon"
           src="/static/icons/ic_tabbar_message_nor.png"
           mode="aspectFit"
         ></image>
-        <!-- 交换记录文字 -->
         <text class="text">我的消息</text>
       </view>
     </view>
@@ -74,14 +72,19 @@ export default {
     },
     // 跳转到订单页面
     goToOrders() {
-      uni.switchTab({
+      uni.navigateTo({
         url: "/pages/order/index",
       });
     },
     // 跳转到交换记录页面
     goToExchanges() {
-      uni.switchTab({
+      uni.navigateTo({
         url: "/pages/exchange/index",
+      });
+    },
+    goToMessages() {
+      uni.navigateTo({
+        url: "/pages/message/index",
       });
     },
   },

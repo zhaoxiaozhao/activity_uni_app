@@ -33,7 +33,7 @@
 			}
 		},
 		{
-			"path": "pages/product/details",
+			"path": "pages/product/detail",
 			"style": {
 				"navigationBarTitleText": "商品详情",
 				"enablePullDownRefresh": false
@@ -78,6 +78,20 @@
 			"path": "pages/mine/index",
 			"style": {
 				"navigationBarTitleText": "我的",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/message/index",
+			"style": {
+				"navigationBarTitleText": "我的消息",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/message/detail",
+			"style": {
+				"navigationBarTitleText": "消息",
 				"enablePullDownRefresh": false
 			}
 		}
